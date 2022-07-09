@@ -1,3 +1,4 @@
+import { Message } from "wechaty";
 import BaseAdapter from "../adapters/Adapter";
 
 export interface AdapterOptions {
@@ -84,8 +85,7 @@ export enum FilterType {
 export interface Configuration {
     [key: string]: string | any;
     aggregation: AggregationConfig;
-    targetSource: string;
-    targetId: string;
+    target: SimpleAccountProfile;
     forwardTime: string;
     blacklist: SimpleAccountProfile[];
     whitelist: SimpleAccountProfile[];
@@ -102,4 +102,8 @@ export interface SimpleAccountProfile {
     id: string;
     name: string;
     alias: string;
+}
+
+export interface AdapterEventListener {
+    message: (message: Message) => void;
 }

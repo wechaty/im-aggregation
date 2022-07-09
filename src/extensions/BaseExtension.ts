@@ -116,6 +116,7 @@ export default class BaseExtension extends Extension {
                 config.forwardTime = `${hour}:${minute}`;
                 setConfiguration(config);
                 this.adapter.bot.say(`Forward time set to ${hour}:${minute}`);
+                this.adapter.emit("updateScheduleJob");
             } catch (error) {
                 this.adapter.bot.say("Invalid time format.");
             }
@@ -129,17 +130,21 @@ export default class BaseExtension extends Extension {
     }
 
     setForwardTargetAccount(): Command {
-        const handle = async (targetAccount: string) => {
+        const handle = async (alias: string) => {
             const targetContact = await this.adapter.bot.Contact.find({
-                alias: targetAccount,
+                alias,
             });
             if (!targetContact) {
-                this.adapter.bot.say(`${targetAccount} not found.`);
+                this.adapter.bot.say(`${alias} not found.`);
                 return;
             }
             const config = getAllConfigurations();
-            config.targetId = targetContact.id;
-            config.targetSource = this.adapter.profile.source;
+            config.target = {
+                source: this.adapter.profile.source,
+                id: targetContact.id,
+                name: targetContact.name(),
+                alias,
+            };
             setConfiguration(config);
 
             this.adapter.bot.say(targetContact);

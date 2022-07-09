@@ -8,10 +8,11 @@ import {
 import { loginAccount, logoutAccount } from "../database/impl/account";
 import Message from "../database/models/Message";
 import Extension from "../extensions/Extension";
-import { Command, MessageType, Profile } from "../schema/types";
+import { Command, FilterType, MessageType, Profile } from "../schema/types";
 import { isNullOrEmpty } from "../utils/helper";
 import log4js from "../utils/logger";
 import EventEmitter from "events";
+import { getAllConfigurations } from "../database/impl/configuration";
 
 const downloadsFolder = process.env.DOWNLOADS_FOLDER || "downloads";
 
@@ -107,6 +108,10 @@ export default class BaseAdapter extends EventEmitter {
             this.invokeCommand(cmd, ...args);
             return;
         }
+        if (!this.filter(message)) {
+            return;
+        }
+        this.emit("message", message);
         this.saveMessage(message);
     }
 
@@ -150,5 +155,30 @@ export default class BaseAdapter extends EventEmitter {
         if (this._commands[shortcut]) {
             await this._commands[shortcut].handle(...args);
         }
+    }
+
+    public filter(message: MessageInterface) {
+        const config = getAllConfigurations();
+        switch (config.filter) {
+            case FilterType.blacklist:
+                return config.blacklist.findIndex(
+                    (a) =>
+                        a.source === this.profile.source &&
+                        a.id === message.talker().id
+                ) > -1
+                    ? null
+                    : message;
+            case FilterType.whitelist:
+                return config.whitelist.findIndex(
+                    (a) =>
+                        a.source === this.profile.source &&
+                        a.id === message.talker().id
+                ) > -1
+                    ? message
+                    : null;
+            default:
+                break;
+        }
+        return message;
     }
 }

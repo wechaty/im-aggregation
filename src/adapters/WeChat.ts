@@ -4,6 +4,7 @@ import path from "path";
 import { Sayable, WechatyBuilder, WechatyOptions } from "wechaty";
 import PuppetPadlocal from "wechaty-puppet-padlocal";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
+import { getAllConfigurations } from "../database/impl/configuration";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
 import {

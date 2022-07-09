@@ -39,7 +39,7 @@ export async function generateMsgFileName(
  * @returns 
  */
 export function extractTimeString(timeString: string) {
-    timeString = timeString.replace(/：|-|,|，|.|。|点/g, ":");
+    timeString = timeString.replace(/：|-|,|，|\.|。|点/g, ":");
     const [_, hour, minute] = /(\d{1,2}):(\d{1,2})/.exec(timeString) || [];
     if (
         !hour ||

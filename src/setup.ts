@@ -18,14 +18,32 @@ const adapterMap: AdapterMap = {
     wechat: new WeChatAdapter(),
     wecom: new WeComAdapter(),
     whatsapp: new WhatsAppAdapter(),
-}
+};
 const enabledAdapters = process.env.ENABLED_ADAPTERS || "wechat";
 
 const adapters: BaseAdapter[] = [];
 
-enabledAdapters.split(",").forEach(name => {
+enabledAdapters.split(",").forEach((name) => {
     adapters.push(adapterMap[name]);
-})
+});
+
+async function forwardHandler() {
+    const config = getAllConfigurations();
+    const adapter = adapters.find(
+        (adapter) => adapter.profile.source === config.targetSource
+    );
+    if (adapter) {
+        const { startTime, endTime } = config.aggregation;
+
+        const messages = await getMessagesWithinPeriod(
+            parseTimeString(startTime),
+            parseTimeString(endTime)
+        );
+        await adapter.forwardMessages(messages);
+    } else {
+        logger.error(`Adapter for ${config.targetSource} not found`);
+    }
+}
 
 export async function setup() {
     // load extensions
@@ -35,42 +53,21 @@ export async function setup() {
     });
     adapters.forEach(async (adapter) => await adapter.start());
 
-    const configs = getAllConfigurations();
-    const { forwardTime } = configs;
-    const [hour, minute] = forwardTime.split(":");
+    let config = getAllConfigurations();
+    let { forwardTime } = config;
+    let [hour, minute] = forwardTime.split(":");
 
-    var job = schedule.scheduleJob(
-        `${minute} ${hour} * * *`,
-        async function () {
-            const adapter = adapters.find(
-                (adapter) => adapter.profile.source === configs.targetSource
-            );
-            if (adapter) {
-                const { startTime, endTime } = configs.aggregation;
-
-                const messages = await getMessagesWithinPeriod(
-                    parseTimeString(startTime),
-                    parseTimeString(endTime)
-                );
-                await adapter.forwardMessages(messages);
-            } else {
-                logger.error(`Adapter for ${configs.targetSource} not found`);
-            }
-        }
-    );
+    var job = schedule.scheduleJob(`${minute} ${hour} * * *`, forwardHandler);
 
     for (const adapter of adapters) {
-        adapter.on(
-            "updateScheduleJob",
-            (scheduleTime: string, scheduleHandler: Function) => {
-                job.cancel();
-                job = schedule.scheduleJob(
-                    scheduleTime,
-                    function (firstDate: Date) {
-                        scheduleHandler(firstDate);
-                    }
-                );
-            }
-        );
+        adapter.on("updateScheduleJob", () => {
+            job.cancel();
+            config = getAllConfigurations();
+            [hour, minute] = config.forwardTime.split(":");
+            job = schedule.scheduleJob(
+                `${minute} ${hour} * * *`,
+                forwardHandler
+            );
+        });
     }
 }
