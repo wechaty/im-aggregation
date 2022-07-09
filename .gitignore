@@ -1,0 +1,9 @@
+node_modules
+.wwebjs_auth
+.env
+.log/
+output
+downloads
+src/database/data.sqlite
+src/database/config.json
+yarn-error.log
