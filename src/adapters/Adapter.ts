@@ -1,5 +1,5 @@
 import QRCode from "qrcode";
-import { Sayable, ScanStatus } from "wechaty";
+import { Contact, Sayable, ScanStatus } from "wechaty";
 import {
     ContactSelfInterface,
     MessageInterface,
@@ -50,16 +50,26 @@ export default class BaseAdapter extends EventEmitter {
         return this;
     }
 
-    async batchSay(messages: Sayable[]): Promise<void> {
+    async batchSay(messages: Sayable[], contact?: Contact): Promise<void> {
         for (const message of messages) {
-            await this.bot.say(message).catch(this.logger.error);
+            if (contact) {
+                await contact.say(message).catch(this.logger.error);
+            } else {
+                await this.bot.say(message).catch(this.logger.error);
+            }
         }
     }
 
     async forwardMessages(messages: Message[]) {
-        const sayableMessages = this.convertMessagesToSayable(messages);
+        const config = getAllConfigurations();
+        const target = await this.bot.Contact.find({ id: config.target.id });
+        if (!target) {
+            this.logger.error("Target contact not found");
+            return;
+        }
+        const sayableMessages = await this.convertMessagesToSayable(messages);
 
-        await this.batchSay(sayableMessages);
+        await this.batchSay(sayableMessages, target);
     }
 
     private scanHandler(qrcode: string, status: ScanStatus): void {
@@ -123,7 +133,7 @@ export default class BaseAdapter extends EventEmitter {
         this.logger.error(error);
     }
 
-    convertMessagesToSayable(messages: Message[]): Sayable[] {
+    async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         throw new Error("Not implemented");
     }
 

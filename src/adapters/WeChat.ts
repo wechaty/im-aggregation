@@ -4,7 +4,7 @@ import path from "path";
 import { Sayable, WechatyBuilder, WechatyOptions } from "wechaty";
 import PuppetPadlocal from "wechaty-puppet-padlocal";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
-import { getAllConfigurations } from "../database/impl/configuration";
+import intl from "../i18n/translation";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
 import {
@@ -13,7 +13,7 @@ import {
     WechatPuppetType,
 } from "../schema/types";
 import { generateMsgFileName } from "../utils/helper";
-import { convertSilkToWav } from "../utils/voice";
+import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeChatAdapter extends BaseAdapter {
@@ -51,11 +51,14 @@ export default class WeChatAdapter extends BaseAdapter {
         return WechatyBuilder.build(options);
     }
 
-    convertMessagesToSayable(messages: Message[]): Sayable[] {
+    async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
         msgBundle.push(
-            `[${this.profile.source}] You received ${messages.length} messages.`
+            intl.t("receiveMessageHint", {
+                source: this.profile.source,
+                len: messages.length,
+            })
         );
         for (const message of messages) {
             switch (message.type) {
@@ -71,22 +74,23 @@ export default class WeChatAdapter extends BaseAdapter {
                     break;
                 case MessageType.Audio:
                     const voiceFileBox = FileBox.fromFile(message.attachment);
+                    const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
-                        duration: 10,
+                        duration,
                     };
                     msgBundle.push(voiceFileBox);
                     break;
                 case MessageType.Url:
                     const urlLik = new this.bot.UrlLink(
-                        JSON.parse(message.attachment)
+                        JSON.parse(message.content)
                     );
                     msgBundle.push(urlLik);
                     break;
                 default: // Unknown message type.
                     msgBundle.push(
-                        `You received a ${
-                            MessageTypeName[message.type]
-                        } message`
+                        intl.t("receiveUnsupportedMessage", {
+                            type: MessageTypeName[message.type],
+                        })
                     );
                     break;
             }
@@ -143,9 +147,9 @@ export default class WeChatAdapter extends BaseAdapter {
                 // Unknown message type. Return directly.
                 return;
             default:
-                buildOpt.content = `You received a ${
-                    MessageTypeName[buildOpt.type]
-                } message.`;
+                buildOpt.content = intl.t("receiveUnsupportedMessage", {
+                    type: MessageTypeName[buildOpt.type],
+                });
                 break;
         }
 

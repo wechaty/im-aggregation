@@ -26,7 +26,7 @@ export default class WeComAdapter extends BaseAdapter {
         return bot;
     }
 
-    convertMessagesToSayable(messages: Message[]): Sayable[] {
+    async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
         msgBundle.push(

@@ -30,7 +30,7 @@ enabledAdapters.split(",").forEach((name) => {
 async function forwardHandler() {
     const config = getAllConfigurations();
     const adapter = adapters.find(
-        (adapter) => adapter.profile.source === config.targetSource
+        (adapter) => adapter.profile.source === config.target.source
     );
     if (adapter) {
         const { startTime, endTime } = config.aggregation;
@@ -63,6 +63,7 @@ export async function setup() {
         adapter.on("updateScheduleJob", () => {
             job.cancel();
             config = getAllConfigurations();
+            logger.info("Update schedule job");
             [hour, minute] = config.forwardTime.split(":");
             job = schedule.scheduleJob(
                 `${minute} ${hour} * * *`,

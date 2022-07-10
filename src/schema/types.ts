@@ -58,7 +58,7 @@ export const MessageTypeName = [
 
 export interface Command {
     name: string;
-    shortcut: string;   // should be unique
+    shortcut: string; // should be unique
     description: string;
     handle: (...args: any[]) => any;
 }
@@ -106,4 +106,16 @@ export interface SimpleAccountProfile {
 
 export interface AdapterEventListener {
     message: (message: Message) => void;
+}
+
+export interface IntlPayload {
+    [key: string]: string | number;
+}
+
+export interface IntlSource {
+    [key: string]: string;
+}
+
+export interface IntlSourceMap { 
+    [key: string]: IntlSource;
 }

@@ -91,6 +91,7 @@ export async function getMessagesWithinPeriod(
                 [Op.between]: [startTime, endTime],
             },
         },
+        limit: 10,  // test
     });
     return messages;
 }

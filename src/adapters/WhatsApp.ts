@@ -22,7 +22,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
         return bot;
     }
 
-    convertMessagesToSayable(messages: Message[]): Sayable[] {
+    async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
         msgBundle.push(

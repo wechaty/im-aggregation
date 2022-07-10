@@ -3,16 +3,16 @@ import {
     getAllConfigurations,
     setConfiguration,
 } from "../database/impl/configuration";
-import { Command, FilterType } from "../schema/types";
+import { Command } from "../schema/types";
 import { extractTimeString } from "../utils/helper";
 import Extension from "./Extension";
-
+import intl from "../i18n/translation";
 export default class BaseExtension extends Extension {
     constructor(adapter: BaseAdapter) {
         super(
             adapter,
-            "Base Extension",
-            "This is a base extension for Wechaty. It provides some basic commands."
+            intl.t("baseExtension"),
+            intl.t("baseExtensionDescription")
         );
     }
 
@@ -21,7 +21,9 @@ export default class BaseExtension extends Extension {
             const commands = this.adapter._commands;
             const msgBundle: string[] = [];
             msgBundle.push(
-                `You have ${Object.keys(commands).length} commands registered.`
+                intl.t("commandCountHint", {
+                    len: Object.keys(commands).length,
+                })
             );
             for (const name in commands) {
                 const command = commands[name];
@@ -32,8 +34,8 @@ export default class BaseExtension extends Extension {
             await this.adapter.batchSay(msgBundle);
         };
         return {
-            name: "Show Commands",
-            description: "Show all commands registered in Wechaty.",
+            name: intl.t("showCommand"),
+            description: intl.t("showCommandDescription"),
             shortcut: "sc",
             handle,
         };
@@ -44,9 +46,9 @@ export default class BaseExtension extends Extension {
             const extensions = this.adapter._extensions;
             const msgBundle: string[] = [];
             msgBundle.push(
-                `You have ${
-                    Object.keys(extensions).length
-                } extensions registered.`
+                intl.t("extensionCountHint", {
+                    len: Object.keys(extensions).length,
+                })
             );
             for (const name in extensions) {
                 const extension = extensions[name];
@@ -56,8 +58,8 @@ export default class BaseExtension extends Extension {
         };
 
         return {
-            name: "Show Extensions",
-            description: "Show all extensions registered in Wechaty.",
+            name: intl.t("showExtension"),
+            description: intl.t("showExtensionDescription"),
             shortcut: "se",
             handle,
         };
@@ -67,17 +69,30 @@ export default class BaseExtension extends Extension {
         const handle = async () => {
             const configs = getAllConfigurations();
             const msgBundle = [];
-            msgBundle.push(`Adapter: ${this.adapter.profile.source}`);
-            msgBundle.push(`Forward time: ${configs.forwardTime}`);
-            msgBundle.push(`Forward target source: ${configs.targetSource}`);
-            msgBundle.push(`Forward target account id: ${configs.targetId}`);
+
+            msgBundle.push(
+                intl.t("adapterInfo", {
+                    source: this.adapter.profile.source,
+                })
+            );
+            msgBundle.push(
+                intl.t("baseExtensionForwardTime", {
+                    forwardTime: configs.forwardTime,
+                })
+            );
+            msgBundle.push(
+                intl.t("baseExtensionForwardTarget", {
+                    targetSource: configs.target.source,
+                    name: configs.target.name,
+                })
+            );
 
             await this.adapter.batchSay(msgBundle);
         };
 
         return {
-            name: "Show Infomation",
-            description: "Show infomation of IM aggregation.",
+            name: intl.t("showInfomation"),
+            description: intl.t("showInfomationDescription"),
             shortcut: "si",
             handle,
         };
@@ -89,8 +104,8 @@ export default class BaseExtension extends Extension {
         };
 
         return {
-            name: "Logout",
-            description: "Logout from Wechaty.",
+            name: intl.t("logout"),
+            description: intl.t("logoutDescription"),
             shortcut: "lo",
             handle,
         };
