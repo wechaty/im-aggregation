@@ -3,7 +3,7 @@ LABEL author="TankNee"
 RUN apt-get update \
 && apt-get install -y curl \
 && apt-get install -y build-essential \
-&& apt-get install -y ffmpeg \
+&& apt-get install -y ffmpeg
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install -g yarn \
