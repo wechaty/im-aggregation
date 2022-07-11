@@ -8,7 +8,7 @@ import Message from "../database/models/Message";
 import intl from "../i18n/translation";
 import { MessageType, MessageTypeName } from "../schema/types";
 import { generateMsgFileName } from "../utils/helper";
-import { convertSilkToWav } from "../utils/voice";
+import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeComAdapter extends BaseAdapter {
@@ -47,8 +47,9 @@ export default class WeComAdapter extends BaseAdapter {
                     break;
                 case MessageType.Audio:
                     const voiceFileBox = FileBox.fromFile(message.attachment);
+                    const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
-                        duration: 10,
+                        duration,
                     };
                     msgBundle.push(voiceFileBox);
                     break;
@@ -71,8 +72,6 @@ export default class WeComAdapter extends BaseAdapter {
     }
 
     async saveMessage(message: MessageInterface): Promise<void> {
-        // TODO: Save message to database.
-        // 要将微信的silk格式转为统一格式！
         const buildOpt = {
             type: message.type(),
             talker: message.talker()?.name(),

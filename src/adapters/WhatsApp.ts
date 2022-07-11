@@ -9,6 +9,7 @@ import Message from "../database/models/Message";
 import intl from "../i18n/translation";
 import { MessageType, MessageTypeName } from "../schema/types";
 import { generateMsgFileName } from "../utils/helper";
+import { convertOgaToWay, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WhatsAppAdapter extends BaseAdapter {
@@ -43,8 +44,9 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     break;
                 case MessageType.Audio:
                     const voiceFileBox = FileBox.fromFile(message.attachment);
+                    const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
-                        duration: 10,
+                        duration,
                     };
                     msgBundle.push(voiceFileBox);
                     break;
@@ -100,10 +102,10 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     message,
                     voiceFileBox
                 );
-                const voicePath = path.join(this.downloadsFolder, voiceName);
+                const voicePath = path.resolve(this.downloadsFolder, voiceName);
                 if (!fs.existsSync(voicePath))
                     await voiceFileBox.toFile(voicePath);
-                // buildOpt.attachment = await convertSilkToWav(voicePath);
+                buildOpt.attachment = await convertOgaToWay(voicePath);
                 break;
             case MessageType.Url:
                 const url = await message.toUrlLink();

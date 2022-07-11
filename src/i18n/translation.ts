@@ -11,7 +11,7 @@ class Intl {
             zh,
             en,
         };
-        if (!Object.keys(this.source).includes(this.lang)) this.lang = "en";
+        if (!Object.keys(this.source).includes(this.lang)) this.lang = "zh";
     }
 
     t(key: string, payload?: IntlPayload) {

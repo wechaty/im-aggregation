@@ -45,7 +45,7 @@ export default class WeChatAdapter extends BaseAdapter {
 
         return WechatyBuilder.build(options);
     }
-    
+
     constructor() {
         const bot = WeChatAdapter.Init();
         super(bot);
@@ -68,9 +68,14 @@ export default class WeChatAdapter extends BaseAdapter {
                     break;
                 case MessageType.Image:
                 case MessageType.Attachment:
-                    // case MessageType.Emoticon:
                     const fileBox = FileBox.fromFile(message.attachment);
                     msgBundle.push(fileBox);
+                    break;
+                case MessageType.Emoticon:
+                    const emoticonFileBox = FileBox.fromFile(
+                        message.attachment
+                    );
+                    msgBundle.push(emoticonFileBox);
                     break;
                 case MessageType.Audio:
                     const voiceFileBox = FileBox.fromFile(message.attachment);
@@ -126,6 +131,21 @@ export default class WeChatAdapter extends BaseAdapter {
                 buildOpt.attachment = filePath;
                 break;
             case MessageType.Emoticon:
+                const emoticonFileBox = await message.toFileBox();
+                const emoticonFileName = await generateMsgFileName(
+                    message,
+                    emoticonFileBox
+                );
+                const emoticonFilePath = path.join(
+                    this.downloadsFolder,
+                    emoticonFileName.replace(
+                        path.extname(emoticonFileName),
+                        ".gif"
+                    )
+                );
+                if (!fs.existsSync(emoticonFilePath))
+                    await emoticonFileBox.toFile(emoticonFilePath);
+                buildOpt.attachment = emoticonFilePath;
                 break;
             case MessageType.Audio:
                 const voiceFileBox = await message.toFileBox();
