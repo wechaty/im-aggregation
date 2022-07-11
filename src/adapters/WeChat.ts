@@ -17,11 +17,6 @@ import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeChatAdapter extends BaseAdapter {
-    constructor() {
-        const bot = WeChatAdapter.Init();
-        super(bot);
-    }
-
     static Init(): WechatyInterface {
         let options: WechatyOptions;
         const type = process.env.WECHATY_PUPPET_SERVICE_WECHAT_TYPE;
@@ -49,6 +44,11 @@ export default class WeChatAdapter extends BaseAdapter {
         }
 
         return WechatyBuilder.build(options);
+    }
+    
+    constructor() {
+        const bot = WeChatAdapter.Init();
+        super(bot);
     }
 
     async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {

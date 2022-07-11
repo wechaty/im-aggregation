@@ -1,6 +1,5 @@
 import db from "./db";
 import Account from "./models/Account";
-import Configuration from "./models/Configuration";
 import Message from "./models/Message";
 
 db.sync({
@@ -12,9 +11,5 @@ Account.sync({
 });
 
 Message.sync({
-    force: true,
-});
-
-Configuration.sync({
     force: true,
 });

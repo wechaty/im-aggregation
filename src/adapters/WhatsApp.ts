@@ -6,20 +6,21 @@ import { PuppetWhatsapp } from "wechaty-puppet-whatsapp";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
+import intl from "../i18n/translation";
 import { MessageType, MessageTypeName } from "../schema/types";
 import { generateMsgFileName } from "../utils/helper";
 import BaseAdapter from "./Adapter";
 
 export default class WhatsAppAdapter extends BaseAdapter {
-    constructor() {
-        const bot = WhatsAppAdapter.Init();
-        super(bot);
-    }
-
     static Init(): WechatyInterface {
         const puppet = new PuppetWhatsapp();
         const bot = WechatyBuilder.build({ puppet });
         return bot;
+    }
+
+    constructor() {
+        const bot = WhatsAppAdapter.Init();
+        super(bot);
     }
 
     async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
@@ -55,9 +56,9 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     break;
                 default:
                     msgBundle.push(
-                        `You received a ${
-                            MessageTypeName[message.type]
-                        } message`
+                        intl.t("receiveUnsupportedMessage", {
+                            type: MessageTypeName[message.type],
+                        })
                     );
                     break;
             }
@@ -113,9 +114,9 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 // Unknown message type. Return directly.
                 return;
             default:
-                buildOpt.content = `You received a ${
-                    MessageTypeName[buildOpt.type]
-                } message.`;
+                buildOpt.content = intl.t("receiveUnsupportedMessage", {
+                    type: MessageTypeName[buildOpt.type],
+                });
                 break;
         }
 

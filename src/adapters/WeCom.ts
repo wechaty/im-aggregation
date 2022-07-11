@@ -5,17 +5,13 @@ import { Sayable, WechatyBuilder } from "wechaty";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
+import intl from "../i18n/translation";
 import { MessageType, MessageTypeName } from "../schema/types";
 import { generateMsgFileName } from "../utils/helper";
 import { convertSilkToWav } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeComAdapter extends BaseAdapter {
-    constructor() {
-        const bot = WeComAdapter.Init();
-        super(bot);
-    }
-
     static Init(): WechatyInterface {
         const bot = WechatyBuilder.build({
             puppet: "wechaty-puppet-service",
@@ -24,6 +20,11 @@ export default class WeComAdapter extends BaseAdapter {
             },
         });
         return bot;
+    }
+
+    constructor() {
+        const bot = WeComAdapter.Init();
+        super(bot);
     }
 
     async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
@@ -59,9 +60,9 @@ export default class WeComAdapter extends BaseAdapter {
                     break;
                 default:
                     msgBundle.push(
-                        `You received a ${
-                            MessageTypeName[message.type]
-                        } message`
+                        intl.t("receiveUnsupportedMessage", {
+                            type: MessageTypeName[message.type],
+                        })
                     );
                     break;
             }
@@ -103,22 +104,23 @@ export default class WeComAdapter extends BaseAdapter {
                 buildOpt.attachment = url.payload.url;
                 break;
             case MessageType.Audio:
-                // const voiceFileBox = await message.toFileBox();
-                // const voiceName = await generateMsgFileName(
-                //     message,
-                //     voiceFileBox
-                // );
-                // const voicePath = path.join(this.downloadsFolder, voiceName);
-                // if (!fs.existsSync(voicePath)) voiceFileBox.toFile(voicePath);
-                // buildOpt.attachment = await convertSilkToWav(voicePath);
+                const voiceFileBox = await message.toFileBox();
+                const voiceName = await generateMsgFileName(
+                    message,
+                    voiceFileBox
+                );
+                const voicePath = path.resolve(this.downloadsFolder, voiceName);
+                if (!fs.existsSync(voicePath))
+                    await voiceFileBox.toFile(voicePath);
+                buildOpt.attachment = await convertSilkToWav(voicePath);
                 break;
             case MessageType.Unknown:
                 // Unknown message type. Return directly.
                 return;
             default:
-                buildOpt.content = `You received a ${
-                    MessageTypeName[buildOpt.type]
-                } message.`;
+                buildOpt.content = intl.t("receiveUnsupportedMessage", {
+                    type: MessageTypeName[buildOpt.type],
+                });
                 break;
         }
 

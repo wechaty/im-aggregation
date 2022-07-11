@@ -5,7 +5,6 @@ echo "Done."
 
 echo "Try to initialize the database..."
 ts-node src/database/sync.ts
-ts-node src/database/init.ts
 touch src/database/data.json
 echo "Done."
 
