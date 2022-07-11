@@ -6,8 +6,7 @@ RUN apt-get update \
 && apt-get install -y ffmpeg
 WORKDIR /usr/src/app
 COPY . .
-RUN npm install -g yarn \
-&& yarn global add ts-node \
+RUN yarn global add ts-node \
 && yarn \
 && yarn run compile:wx-voice
 
