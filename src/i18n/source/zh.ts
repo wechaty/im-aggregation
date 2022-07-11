@@ -16,5 +16,15 @@ export default {
     logout: "退出",
     logoutDescription: "退出登录",
     receiveUnsupportedMessage: "你收到了 {type} 类型的消息",
-    receiveMessageHint: "[{source}] 你收到了 {len} 条消息。"
+    receiveMessageHint: "[{source}] 你收到了 {len} 条消息。",
+    filterExtension: "过滤插件",
+    filterExtensionDescription: "控制 IM Aggregation 的消息过滤。",
+    filterTypeSetTo: "过滤类型设置为 {type}",
+    setFilterType: "设置过滤类型",
+    setFilterTypeDescription:
+        "设置消息过滤器的过滤类型（白名单，黑名单，无，默认为无）",
+    invalidForwardMessageLimit: "数量输入错误",
+    forwardMessageLimitSetTo: "转发消息限制设置为 {limit}",
+    setForwardMessageLimit: "设置转发消息的数量限制",
+    setForwardMessageLimitDescription: "设置转发消息数量（默认为 10）",
 };

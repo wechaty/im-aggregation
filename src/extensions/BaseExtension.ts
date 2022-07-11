@@ -111,18 +111,6 @@ export default class BaseExtension extends Extension {
         };
     }
 
-    setCommand(): Command {
-        const handle = async () => {
-            this.adapter.bot.say("Not implemented yet.");
-        };
-        return {
-            name: "Set Configuration",
-            description: "Set configuration.",
-            shortcut: "set",
-            handle,
-        };
-    }
-
     setForwardTime(): Command {
         const handle = async (time: string) => {
             try {
@@ -177,7 +165,6 @@ export default class BaseExtension extends Extension {
         this.adapter.registerCommand(this.showExtensions());
         this.adapter.registerCommand(this.showInfomation());
         this.adapter.registerCommand(this.logoutCommand());
-        this.adapter.registerCommand(this.setCommand());
         this.adapter.registerCommand(this.setForwardTime());
         this.adapter.registerCommand(this.setForwardTargetAccount());
     }

@@ -3,6 +3,7 @@ import {
     getAllConfigurations,
     setConfiguration,
 } from "../database/impl/configuration";
+import intl from "../i18n/translation";
 import { FilterType, SimpleAccountProfile } from "../schema/types";
 import Extension from "./Extension";
 
@@ -10,8 +11,8 @@ export default class FilterExtension extends Extension {
     constructor(adapter: BaseAdapter) {
         super(
             adapter,
-            "Filter Extension",
-            "Manage filters for IM aggregation."
+            intl.t("filterExtension"),
+            intl.t("filterExtensionDescription")
         );
     }
 
@@ -22,11 +23,11 @@ export default class FilterExtension extends Extension {
                 type = "none";
             config.filter = type as FilterType;
             setConfiguration(config);
-            this.adapter.bot.say(`Filter type set to ${type}`);
+            this.adapter.bot.say(intl.t("filterTypeSetTo", { type }));
         };
         return {
-            name: "Set Filter Type",
-            description: "Set filter type.",
+            name: intl.t("setFilterType"),
+            description: intl.t("setFilterTypeDescription"),
             shortcut: "filter",
             handle,
         };
@@ -132,11 +133,35 @@ export default class FilterExtension extends Extension {
         };
     }
 
+    setForwardMessageLimit() {
+        const handle = async (limit: string) => {
+            const config = getAllConfigurations();
+            config.forwardMessageLimit = parseInt(limit);
+            if (
+                isNaN(config.forwardMessageLimit) ||
+                config.forwardMessageLimit < 0 ||
+                config.forwardMessageLimit > 100
+            ) {
+                this.adapter.bot.say(intl.t("invalidForwardMessageLimit"));
+                return;
+            }
+            setConfiguration(config);
+            this.adapter.bot.say(intl.t("forwardMessageLimitSetTo", { limit }));
+        };
+        return {
+            name: intl.t("setForwardMessageLimit"),
+            description: intl.t("setForwardMessageLimitDescription"),
+            shortcut: "setfml",
+            handle,
+        };
+    }
+
     async register() {
         this.adapter.registerCommand(this.setFilterType());
         this.adapter.registerCommand(this.appendBlacklist());
         this.adapter.registerCommand(this.removeBlacklist());
         this.adapter.registerCommand(this.appendWhitelist());
         this.adapter.registerCommand(this.removeWhitelist());
+        this.adapter.registerCommand(this.setForwardMessageLimit());
     }
 }

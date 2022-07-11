@@ -90,6 +90,7 @@ export interface Configuration {
     blacklist: SimpleAccountProfile[];
     whitelist: SimpleAccountProfile[];
     filter: FilterType;
+    forwardMessageLimit: number;
 }
 
 export interface Profile {
