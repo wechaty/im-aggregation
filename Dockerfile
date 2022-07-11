@@ -1,4 +1,4 @@
-FROM Ubuntu:latest
+FROM ubuntu:22.04
 LABEL author="TankNee"
 WORKDIR /usr/src/app
 COPY . .
