@@ -159,6 +159,10 @@ export default class WeChatAdapter extends BaseAdapter {
                 buildOpt.attachment = await convertSilkToWav(voicePath);
                 break;
             case MessageType.Url:
+                const talkerType = message.talker().type();
+                if (talkerType === this.bot.Contact.Type.Official) {
+                    return;
+                }
                 const url = await message.toUrlLink();
                 buildOpt.content = JSON.stringify(url.payload);
                 buildOpt.attachment = url.payload.url;

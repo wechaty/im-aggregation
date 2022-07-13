@@ -11,8 +11,8 @@ WORKDIR /usr/src/app
 COPY . .
 # 安装依赖库
 RUN yarn global add ts-node \
-&& yarn \
-&& yarn run compile:wx-voice
+    && yarn \
+    && yarn run compile:wx-voice
 
 EXPOSE 7777
 CMD ["echo", "'IM Aggregation.'"]
