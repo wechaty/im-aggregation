@@ -1,4 +1,3 @@
-import "dotenv/config";
 import schedule from "node-schedule";
 import BaseAdapter from "./adapters/Adapter";
 import { getAllConfigurations } from "./database/impl/configuration";

@@ -12,7 +12,6 @@
         "compile:wx-voice": "wx-voice compile"
     },
     "dependencies": {
-        "dotenv": "^16.0.1",
         "file-box": "^1.4.15",
         "lodash": "^4.17.21",
         "log4js": "^6.5.2",
