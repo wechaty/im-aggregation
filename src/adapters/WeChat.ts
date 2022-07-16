@@ -19,21 +19,22 @@ import BaseAdapter from "./Adapter";
 export default class WeChatAdapter extends BaseAdapter {
     static Init(): WechatyInterface {
         let options: WechatyOptions;
-        const type = process.env.WECHATY_PUPPET_SERVICE_WECHAT_TYPE;
+        const type = process.env.WECHAT_TOKEN_TYPE;
+        const token = process.env.WECHAT_TOKEN;
 
         switch (type) {
             case WechatPuppetType.Donut:
                 options = {
                     puppet: "wechaty-puppet-service",
                     puppetOptions: {
-                        token: process.env.WECHATY_WECHAT_PUPPET_TOKEN,
+                        token,
                     },
                 };
                 break;
             case WechatPuppetType.Padlocal:
                 options = {
                     puppet: new PuppetPadlocal({
-                        token: process.env.WECHATY_WECHAT_PUPPET_TOKEN,
+                        token,
                     }),
                 };
                 break;

@@ -16,7 +16,7 @@ export default class WeComAdapter extends BaseAdapter {
         const bot = WechatyBuilder.build({
             puppet: "wechaty-puppet-service",
             puppetOptions: {
-                token: process.env.WECHATY_PUPPET_SERVICE_WECOM,
+                token: process.env.WECOM_TOKEN,
             },
         });
         return bot;

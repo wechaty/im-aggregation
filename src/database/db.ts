@@ -6,6 +6,7 @@ const logger = log4js.getLogger("db");
 const db = new Sequelize({
     dialect: "sqlite",
     storage: "src/database/data.sqlite",
+    logging: (msg) => logger.info(msg),
 });
 
 try {

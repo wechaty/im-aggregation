@@ -37,7 +37,7 @@ export default class FilterExtension extends Extension {
         const handle = async (alias: string) => {
             const contact = await this.adapter.bot.Contact.find({ alias });
             if (!contact) {
-                this.adapter.bot.say(`No contact found for alias ${alias}`);
+                this.adapter.bot.say(intl.t("aliasContactNotFound", { alias }));
                 return;
             }
             const config = getAllConfigurations();
@@ -49,11 +49,11 @@ export default class FilterExtension extends Extension {
             };
             config.blacklist.push(profile);
             setConfiguration(config);
-            await this.adapter.bot.say(`Added ${profile.name} to blacklist`);
+            await this.adapter.bot.say(intl.t("blacklistAppended", { alias }));
         };
         return {
-            name: "Append Blacklist",
-            description: "Append a user to blacklist.",
+            name: intl.t("appendBlacklist"),
+            description: intl.t("appendBlacklistDescription"),
             shortcut: "ab",
             handle,
         };
@@ -68,16 +68,16 @@ export default class FilterExtension extends Extension {
                     p.alias === alias
             );
             if (index === -1) {
-                this.adapter.bot.say(`No contact found for alias ${alias}`);
+                this.adapter.bot.say(intl.t("aliasContactNotFound", { alias }));
                 return;
             }
             config.blacklist.splice(index, 1);
             setConfiguration(config);
-            await this.adapter.bot.say(`Removed ${alias} from blacklist`);
+            await this.adapter.bot.say(intl.t("blacklistRemoved", { alias }));
         };
         return {
-            name: "Remove Blacklist",
-            description: "Remove a user from blacklist.",
+            name: intl.t("removeBlacklist"),
+            description: intl.t("removeBlacklistDescription"),
             shortcut: "rb",
             handle,
         };
@@ -87,7 +87,7 @@ export default class FilterExtension extends Extension {
         const handle = async (alias: string) => {
             const contact = await this.adapter.bot.Contact.find({ alias });
             if (!contact) {
-                this.adapter.bot.say(`No contact found for alias ${alias}`);
+                this.adapter.bot.say(intl.t("aliasContactNotFound", { alias }));
                 return;
             }
             const config = getAllConfigurations();
@@ -99,11 +99,11 @@ export default class FilterExtension extends Extension {
             };
             config.whitelist.push(profile);
             setConfiguration(config);
-            await this.adapter.bot.say(`Added ${profile.name} to whitelist`);
+            await this.adapter.bot.say(intl.t("whitelistAppended", { alias }));
         };
         return {
-            name: "Append Whitelist",
-            description: "Append a user to whitelist.",
+            name: intl.t("appendWhitelist"),
+            description: intl.t("appendWhitelistDescription"),
             shortcut: "aw",
             handle,
         };
@@ -118,16 +118,16 @@ export default class FilterExtension extends Extension {
                     p.alias === alias
             );
             if (index === -1) {
-                this.adapter.bot.say(`No contact found for alias ${alias}`);
+                this.adapter.bot.say(intl.t("aliasContactNotFound", { alias }));
                 return;
             }
             config.whitelist.splice(index, 1);
             setConfiguration(config);
-            await this.adapter.bot.say(`Removed ${alias} from whitelist`);
+            await this.adapter.bot.say(intl.t("whitelistRemoved", { alias }));
         };
         return {
-            name: "Remove Whitelist",
-            description: "Remove a user from whitelist.",
+            name: intl.t("removeWhitelist"),
+            description: intl.t("removeWhitelistDescription"),
             shortcut: "rw",
             handle,
         };

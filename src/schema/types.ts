@@ -68,10 +68,6 @@ export interface ContactQueryFilter {
     alias?: string;
 }
 
-export interface AdapterMap {
-    [key: string]: BaseAdapter;
-}
-
 export interface AggregationConfig {
     startTime: string;
     endTime: string;

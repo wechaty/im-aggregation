@@ -88,13 +88,12 @@ export default class WhatsAppAdapter extends BaseAdapter {
             case MessageType.Image:
             case MessageType.Attachment:
             case MessageType.Video:
+            case MessageType.Emoticon:
                 const fileBox = await message.toFileBox();
                 const fileName = await generateMsgFileName(message, fileBox);
                 const filePath = path.join(this.downloadsFolder, fileName);
                 if (!fs.existsSync(filePath)) await fileBox.toFile(filePath);
                 buildOpt.attachment = filePath;
-                break;
-            case MessageType.Emoticon:
                 break;
             case MessageType.Audio:
                 const voiceFileBox = await message.toFileBox();

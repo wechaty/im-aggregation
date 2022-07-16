@@ -33,7 +33,12 @@ export async function convertSilkToWav(filePath: string) {
             },
             (file: any) => {
                 if (file) {
-                    resolve(file);
+                    resolve(
+                        path.join(
+                            outputFolder,
+                            path.relative(outputFolder, targetPath)
+                        )
+                    );
                 } else {
                     reject(new Error("Failed to convert silk to wav"));
                 }
@@ -53,7 +58,12 @@ export async function convertOgaToWay(filePath: string): Promise<string> {
                 reject(error);
             } else {
                 logger.info(stdout);
-                resolve(targetPath);
+                resolve(
+                    path.join(
+                        outputFolder,
+                        path.relative(outputFolder, targetPath)
+                    )
+                );
             }
         });
     });

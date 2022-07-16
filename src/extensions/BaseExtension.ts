@@ -118,15 +118,17 @@ export default class BaseExtension extends Extension {
                 const config = getAllConfigurations();
                 config.forwardTime = `${hour}:${minute}`;
                 setConfiguration(config);
-                this.adapter.bot.say(`Forward time set to ${hour}:${minute}`);
+                this.adapter.bot.say(
+                    intl.t("forwardTimeSet", { hour, minute })
+                );
                 this.adapter.emit("updateScheduleJob");
             } catch (error) {
-                this.adapter.bot.say("Invalid time format.");
+                this.adapter.bot.say(intl.t("invalidTimeFormat"));
             }
         };
         return {
-            name: "Set Forward Time",
-            description: "Set forward time.",
+            name: intl.t("setForwardTime"),
+            description: intl.t("setForwardTimeDescription"),
             shortcut: "setft",
             handle,
         };
@@ -138,7 +140,9 @@ export default class BaseExtension extends Extension {
                 alias,
             });
             if (!targetContact) {
-                this.adapter.bot.say(`${alias} not found.`);
+                this.adapter.bot.say(
+                    intl.t("aliasContactNotFound", { alias: alias })
+                );
                 return;
             }
             const config = getAllConfigurations();
@@ -153,8 +157,8 @@ export default class BaseExtension extends Extension {
             this.adapter.bot.say(targetContact);
         };
         return {
-            name: "Set Forward Target Account",
-            description: "Set forward target account.",
+            name: intl.t("setForwardTargetAccount"),
+            description: intl.t("setForwardTargetAccountDescription"),
             shortcut: "setfta",
             handle,
         };
