@@ -1,0 +1,12 @@
+{
+    "aggregation": {
+        "startTime": "8:00",
+        "endTime": "18:00"
+    },
+    "forwardTime": "18:30",
+    "target": {},
+    "blacklist": [],
+    "whitelist": [],
+    "filter": "blacklist",
+    "forwardMessageLimit": 15
+}
