@@ -53,3 +53,5 @@ export async function setup() {
         job = schedule.scheduleJob(`${minute} ${hour} * * *`, forwardHandler);
     });
 }
+
+setup();

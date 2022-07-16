@@ -7,7 +7,7 @@
     "license": "MIT",
     "private": false,
     "scripts": {
-        "dev": "ts-node index.ts",
+        "dev": "ts-node src/setup.ts",
         "postinstall": "bash init.sh",
         "compile:wx-voice": "wx-voice compile"
     },

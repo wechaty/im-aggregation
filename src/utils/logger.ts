@@ -1,4 +1,5 @@
 import log4js from "log4js";
+import { log } from "wechaty";
 
 log4js.configure({
     appenders: {
@@ -17,6 +18,20 @@ log4js.configure({
 
 const logger = log4js.getLogger();
 
-// console.log = logger.info.bind(logger);
+if (process.env.FORK_MODE) {
+    logger.info("Fork mode");
+
+    console.log = logger.log.bind(logger);
+    console.error = logger.error.bind(logger);
+    console.warn = logger.warn.bind(logger);
+    console.debug = logger.debug.bind(logger);
+    console.trace = logger.trace.bind(logger);
+
+    logger.info("Replacing console.log, console.error, console.warn, console.debug, console.trace");
+    
+    log.info = logger.info.bind(logger);
+    log.error = logger.error.bind(logger);
+    log.warn = logger.warn.bind(logger);
+}
 
 export default log4js;
