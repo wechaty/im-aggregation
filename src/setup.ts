@@ -4,8 +4,9 @@ import { getAllConfigurations } from "./database/impl/configuration";
 import { getMessagesWithinPeriod } from "./database/impl/message";
 import BaseExtension from "./extensions/BaseExtension";
 import FilterExtension from "./extensions/FilterExtension";
-import { parseTimeString } from "./utils/helper";
+import { extractTimeString, parseTimeString } from "./utils/helper";
 import log4js from "./utils/logger";
+import { onForwardTimeUpdate } from "./utils/watcher";
 
 const logger = log4js.getLogger("setup");
 
@@ -49,15 +50,27 @@ export async function setup() {
         `${minute} ${hour} * * *`,
         forwardHandler
     );
+    
+    onForwardTimeUpdate((timeString: string) => {
+        const { hour, minute } = extractTimeString(timeString);
 
-    adapter.on("updateScheduleJob", ({ hour, minute }) => {
         forwardJob.cancel();
         logger.info("Update schedule job");
+
         forwardJob = schedule.scheduleJob(
             `${minute} ${hour} * * *`,
             forwardHandler
         );
-    });
+    })
+
+    // adapter.on("updateScheduleJob", ({ hour, minute }) => {
+    //     forwardJob.cancel();
+    //     logger.info("Update schedule job");
+    //     forwardJob = schedule.scheduleJob(
+    //         `${minute} ${hour} * * *`,
+    //         forwardHandler
+    //     );
+    // });
 }
 
 setup();
