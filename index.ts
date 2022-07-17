@@ -10,5 +10,5 @@ enabledAdapters
     .split(",")
     .filter((a) => validAdapters.includes(a))
     .forEach((adapter) => {
-        childProcess.execSync(`TARGET_ADAPTER=${adapter} FORK_MODE=true yarn run dev`);
+        childProcess.execSync(`pm2 start "TARGET_ADAPTER=${adapter} FORK_MODE=true yarn run dev"`);
     });

@@ -11,6 +11,7 @@ WORKDIR /usr/src/app
 COPY . .
 # 安装依赖库
 RUN yarn global add ts-node \
+    && yarn global add pm2 \
     && yarn \
     && yarn run compile:wx-voice
 
