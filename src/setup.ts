@@ -29,8 +29,10 @@ async function forwardHandler() {
 }
 
 export async function setup() {
-    const Adapter = (await import(`./adapters/${process.env.TARGET_ADAPTER}`))
-        .default;
+    const targetAdapter = process.argv[3];
+    if (!targetAdapter) logger.error("Target adapter not specified");
+
+    const Adapter = (await import(`./adapters/${targetAdapter}`)).default;
 
     adapter = new Adapter();
 
@@ -43,14 +45,18 @@ export async function setup() {
     let { forwardTime } = config;
     let [hour, minute] = forwardTime.split(":");
 
-    var job = schedule.scheduleJob(`${minute} ${hour} * * *`, forwardHandler);
+    var forwardJob = schedule.scheduleJob(
+        `${minute} ${hour} * * *`,
+        forwardHandler
+    );
 
-    adapter.on("updateScheduleJob", () => {
-        job.cancel();
-        config = getAllConfigurations();
+    adapter.on("updateScheduleJob", ({ hour, minute }) => {
+        forwardJob.cancel();
         logger.info("Update schedule job");
-        [hour, minute] = config.forwardTime.split(":");
-        job = schedule.scheduleJob(`${minute} ${hour} * * *`, forwardHandler);
+        forwardJob = schedule.scheduleJob(
+            `${minute} ${hour} * * *`,
+            forwardHandler
+        );
     });
 }
 

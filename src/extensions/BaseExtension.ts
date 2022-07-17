@@ -1,12 +1,13 @@
 import BaseAdapter from "../adapters/Adapter";
 import {
     getAllConfigurations,
-    setConfiguration,
+    setConfiguration
 } from "../database/impl/configuration";
+import intl from "../i18n/translation";
 import { Command } from "../schema/types";
 import { extractTimeString } from "../utils/helper";
 import Extension from "./Extension";
-import intl from "../i18n/translation";
+
 export default class BaseExtension extends Extension {
     constructor(adapter: BaseAdapter) {
         super(
@@ -121,7 +122,7 @@ export default class BaseExtension extends Extension {
                 this.adapter.bot.say(
                     intl.t("forwardTimeSet", { hour, minute })
                 );
-                this.adapter.emit("updateScheduleJob");
+                this.adapter.emit("updateScheduleJob", { hour, minute });
             } catch (error) {
                 this.adapter.bot.say(intl.t("invalidTimeFormat"));
             }

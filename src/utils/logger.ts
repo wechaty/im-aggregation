@@ -18,8 +18,8 @@ log4js.configure({
 
 const logger = log4js.getLogger();
 
-if (process.env.FORK_MODE) {
-    logger.info("Fork mode");
+if (process.env.LOG_FILE) {
+    logger.info("Log to file");
 
     console.log = logger.log.bind(logger);
     console.error = logger.error.bind(logger);
