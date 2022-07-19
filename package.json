@@ -12,6 +12,8 @@
         "compile:wx-voice": "wx-voice compile"
     },
     "dependencies": {
+        "@juzi/wechaty-puppet": "^1.0.8",
+        "@juzi/wechaty-puppet-whatsapp": "^1.0.4",
         "file-box": "^1.4.15",
         "lodash": "^4.17.21",
         "log4js": "^6.5.2",

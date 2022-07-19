@@ -10,6 +10,7 @@ enabledAdapters
     .split(",")
     .filter((a) => validAdapters.includes(a))
     .forEach((adapter) => {
-        childProcess.execSync(`pm2 start "yarn run dev --adapter ${adapter}"`);
-        // const yarn = childProcess.spawn("pm2", ["start", `"yarn run dev --adapter ${adapter}"`]);
+        // childProcess.execSync(`pm2 start "yarn run dev --adapter ${adapter}"`);
+        // childProcess.execSync(`yarn run dev --adapter ${adapter}`);
+        childProcess.spawn("yarn", ["run", "dev", "--adapter", adapter]);
     });

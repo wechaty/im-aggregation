@@ -33,7 +33,7 @@ export default {
     setForwardTimeDescription: "使用 18:00 的格式设置聚合消息的转发时间",
     aliasContactNotFound: "未找到别名为 {alias} 的联系人",
     setForwardTargetAccount: "设置转发目标账号",
-    setForwardTargetAccountDescription: "设置聚合消息的转发目标账号（请使用目标账号的备注进行设置）",
+    setForwardTargetAccountDescription: "设置消息聚合的目标，且只能是联系人，不能是群组，请将目标的联系人卡片发送到本会话。",
     blacklistAppended: "黑名单已添加：{alias}",
     appendBlacklist: "添加黑名单",
     appendBlacklistDescription: "添加一个联系人到黑名单",
@@ -46,4 +46,6 @@ export default {
     whitelistRemoved: "白名单已移除：{alias}",
     removeWhitelist: "移除白名单",
     removeWhitelistDescription: "从白名单移除一个目标",
+    forwardTargetSet: "转发目标设置为：{name}",
+    invalidContact: "请将联系人卡片转发到本对话框以设置详细聚合的转发目标。",
 };

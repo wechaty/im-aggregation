@@ -1,7 +1,8 @@
+import { Contact } from "wechaty";
 import BaseAdapter from "../adapters/Adapter";
 import {
     getAllConfigurations,
-    setConfiguration
+    setConfiguration,
 } from "../database/impl/configuration";
 import intl from "../i18n/translation";
 import { Command } from "../schema/types";
@@ -136,26 +137,23 @@ export default class BaseExtension extends Extension {
     }
 
     setForwardTargetAccount(): Command {
-        const handle = async (alias: string) => {
-            const targetContact = await this.adapter.bot.Contact.find({
-                alias,
-            });
-            if (!targetContact) {
-                await this.adapter.bot.say(
-                    intl.t("aliasContactNotFound", { alias: alias })
-                );
+        const handle = async (contact: Contact) => {
+            if (!contact || typeof contact === "string") {
+                await this.adapter.bot.say(intl.t("invalidContact"));
                 return;
             }
             const config = getAllConfigurations();
             config.target = {
                 source: this.adapter.profile.source,
-                id: targetContact.id,
-                name: targetContact.name(),
-                alias,
+                id: contact.id,
+                name: contact.name(),
+                alias: (await contact.alias()) || "",
             };
             setConfiguration(config);
 
-            await this.adapter.bot.say(targetContact);
+            await this.adapter.bot.say(
+                intl.t("forwardTargetSet", { ...config.target })
+            );
         };
         return {
             name: intl.t("setForwardTargetAccount"),

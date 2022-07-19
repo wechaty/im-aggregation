@@ -8,4 +8,8 @@ ts-node src/database/sync.ts
 cp src/database/config.example.json src/database/config.json
 echo "Done."
 
+echo "Try to compile the voice converter."
+yarn run compile:wx-voice
+echo "Done."
+
 echo "Please rename the .env.example to .env and fill in the values."

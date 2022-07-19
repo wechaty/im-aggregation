@@ -2,7 +2,7 @@ import { FileBox } from "file-box";
 import fs from "fs";
 import path from "path";
 import { Sayable, WechatyBuilder } from "wechaty";
-import { PuppetWhatsapp } from "wechaty-puppet-whatsapp";
+import { PuppetWhatsapp } from "@juzi/wechaty-puppet-whatsapp";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
@@ -14,7 +14,14 @@ import BaseAdapter from "./Adapter";
 
 export default class WhatsAppAdapter extends BaseAdapter {
     static Init(): WechatyInterface {
-        const puppet = new PuppetWhatsapp();
+        const puppet = new PuppetWhatsapp({
+            puppeteerOptions: {
+                puppeteer: {
+                    headless: false,
+                },
+            },
+        });
+        // @ts-ignore
         const bot = WechatyBuilder.build({ puppet });
         return bot;
     }
@@ -110,6 +117,8 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 const url = await message.toUrlLink();
                 buildOpt.content = JSON.stringify(url.payload);
                 buildOpt.attachment = url.payload.url;
+                break;
+            case MessageType.Contact:
                 break;
             case MessageType.Unknown:
                 // Unknown message type. Return directly.

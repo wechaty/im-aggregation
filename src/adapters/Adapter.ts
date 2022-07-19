@@ -112,11 +112,21 @@ export default class BaseAdapter extends EventEmitter {
 
     private async messageHandler(message: MessageInterface): Promise<void> {
         const self = message.talker().self() && message.listener()?.self();
-        if (self && message.type() === MessageType.Text) {
-            const str = message.text();
-            const [cmd, ...args] = str.split(" ");
-            this.invokeCommand(cmd, ...args);
-            return;
+        if (self) {
+            switch (message.type()) {
+                case MessageType.Text:
+                    const str = message.text();
+                    const [cmd, ...args] = str.split(" ");
+                    this.invokeCommand(cmd, ...args);
+                    return;
+                case MessageType.Contact:
+                    // Forward contact to yourself to set messages aggregation target accout.
+                    const contact = await message.toContact();
+                    await this.invokeCommand("setfta", contact);
+                    return;
+                default:
+                    break;
+            }
         }
         if (!this.filter(message)) {
             return;
