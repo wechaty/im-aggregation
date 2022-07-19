@@ -9,6 +9,8 @@ log4js.configure({
             pattern: "yyyy-MM-dd.log",
             alwaysIncludePattern: true,
             category: "im-aggregation",
+            fileNameSep: "-",
+            numBackups: 10,
         },
     },
     categories: {

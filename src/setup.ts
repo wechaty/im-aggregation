@@ -8,7 +8,7 @@ import { extractTimeString, parseTimeString } from "./utils/helper";
 import log4js from "./utils/logger";
 import { onForwardTimeUpdate } from "./utils/watcher";
 
-const logger = log4js.getLogger("setup");
+const logger = log4js.getLogger("Setup");
 
 var adapter: BaseAdapter;
 
@@ -31,7 +31,10 @@ async function forwardHandler() {
 
 export async function setup() {
     const targetAdapter = process.argv[3];
-    if (!targetAdapter) logger.error("Target adapter not specified");
+    if (!targetAdapter) {
+        logger.error("Target adapter not specified");
+        return;
+    }
 
     const Adapter = (await import(`./adapters/${targetAdapter}`)).default;
 

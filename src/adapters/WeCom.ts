@@ -7,16 +7,24 @@ import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
 import intl from "../i18n/translation";
 import { MessageType, MessageTypeName } from "../schema/types";
-import { generateMsgFileName } from "../utils/helper";
+import { generateMsgFileName, isNullOrEmpty } from "../utils/helper";
 import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeComAdapter extends BaseAdapter {
     static Init(): WechatyInterface {
+        const token = process.env.WECOM_TOKEN || "";
+
+        if (isNullOrEmpty(token)) {
+            throw new Error(
+                "WeCom token type or token is not set. Please check your environment variables."
+            );
+        }
+
         const bot = WechatyBuilder.build({
             puppet: "wechaty-puppet-service",
             puppetOptions: {
-                token: process.env.WECOM_TOKEN,
+                token,
             },
         });
         return bot;

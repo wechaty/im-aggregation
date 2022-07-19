@@ -12,7 +12,7 @@ import {
     MessageTypeName,
     WechatPuppetType,
 } from "../schema/types";
-import { generateMsgFileName } from "../utils/helper";
+import { generateMsgFileName, isNullOrEmpty } from "../utils/helper";
 import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
@@ -21,6 +21,12 @@ export default class WeChatAdapter extends BaseAdapter {
         let options: WechatyOptions;
         const type = process.env.WECHAT_TOKEN_TYPE;
         const token = process.env.WECHAT_TOKEN;
+
+        if (isNullOrEmpty(type) || isNullOrEmpty(token)) {
+            throw new Error(
+                "WeChat token type or token is not set. Please check your environment variables."
+            );
+        }
 
         switch (type) {
             case WechatPuppetType.Donut:

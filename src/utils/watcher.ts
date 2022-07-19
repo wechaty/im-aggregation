@@ -2,12 +2,15 @@ import fs from "fs";
 import path from "path";
 import { Configuration } from "../schema/types";
 
-// watch config.json's changes
 const filePath = path.resolve(__dirname, "../database/config.json");
 var originContent = JSON.parse(
     fs.readFileSync(filePath, "utf8")
 ) as Configuration;
 
+/**
+ * watch the config file and update the config when it changed
+ * @param {function(timeString: string)} callback Call back function
+ */
 export function onForwardTimeUpdate(callback: (timeString: string) => void) {
     fs.watch(filePath, (event: string, filename: string) => {
         if (event === "change") {
