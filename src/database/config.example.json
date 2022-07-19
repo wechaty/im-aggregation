@@ -7,6 +7,6 @@
     "target": {},
     "blacklist": [],
     "whitelist": [],
-    "filter": "blacklist",
+    "filter": "none",
     "forwardMessageLimit": 15
 }

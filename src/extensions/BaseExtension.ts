@@ -141,7 +141,7 @@ export default class BaseExtension extends Extension {
                 alias,
             });
             if (!targetContact) {
-                this.adapter.bot.say(
+                await this.adapter.bot.say(
                     intl.t("aliasContactNotFound", { alias: alias })
                 );
                 return;
@@ -155,7 +155,7 @@ export default class BaseExtension extends Extension {
             };
             setConfiguration(config);
 
-            this.adapter.bot.say(targetContact);
+            await this.adapter.bot.say(targetContact);
         };
         return {
             name: intl.t("setForwardTargetAccount"),
