@@ -2,7 +2,6 @@ import { FileBoxInterface } from "file-box";
 import path from "path";
 import { MessageInterface } from "wechaty/impls";
 import { MessageTypeName } from "../schema/types";
-import converter from "xml-js";
 import crypto from "crypto";
 import _ from "lodash";
 
@@ -69,32 +68,4 @@ export function parseTimeString(timeString: string): Date {
     date.setHours(Number(hour));
     date.setMinutes(Number(minute));
     return date;
-}
-
-export function xml2Obj(xml: string): any {
-    const json = converter.xml2js(xml, {
-        compact: true,
-    });
-    return json;
-}
-
-/**
- * find a specify type property in a object
- * @param obj
- * @param property
- * @returns
- */
-function findProperty(obj: any, property: string): any {
-    if (obj[property] && typeof obj[property] === "string") {
-        return obj[property];
-    }
-    for (const key in obj) {
-        if (obj[key] && typeof obj[key] === "object") {
-            const prop = findProperty(obj[key], property);
-            if (!isNullOrEmpty(prop)) {
-                return prop;
-            }
-        }
-    }
-    return null;
 }

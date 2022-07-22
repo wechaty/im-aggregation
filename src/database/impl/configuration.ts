@@ -1,7 +1,7 @@
 import { Configuration } from "../../schema/types";
 import localCache from "../localcache";
 
-export async function setConfiguration(newConfig: Configuration) {
+export function setConfiguration(newConfig: Configuration) {
     // handle foo.bar case
     localCache.data = { ...localCache.data, ...newConfig };
     localCache.write();

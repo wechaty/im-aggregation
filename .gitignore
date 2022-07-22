@@ -8,3 +8,6 @@ src/database/data.sqlite
 src/database/config.json
 yarn-error.log
 start.sh
+.nyc_output
+coverage
+mochawesome-report
