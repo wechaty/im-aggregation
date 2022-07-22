@@ -5,7 +5,7 @@ RUN apt-get update \
     && apt-get install -y curl \
     && apt-get install -y build-essential \
     && apt-get install -y ffmpeg \
-    && apt-get install -y pandoc \
+    && apt-get install -y pandoc
 # 定位到工作目录
 WORKDIR /usr/src/app
 COPY . .
