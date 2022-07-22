@@ -9,10 +9,11 @@ import { loginAccount, logoutAccount } from "../database/impl/account";
 import Message from "../database/models/Message";
 import Extension from "../extensions/Extension";
 import { Command, FilterType, MessageType, Profile } from "../schema/types";
-import { isNullOrEmpty } from "../utils/helper";
+import { isNullOrEmpty, waitFor } from "../utils/helper";
 import log4js from "../utils/logger";
 import EventEmitter from "events";
 import { getAllConfigurations } from "../database/impl/configuration";
+import intl from "../i18n/translation";
 
 const downloadsFolder = process.env.DOWNLOADS_FOLDER || "downloads";
 
@@ -50,13 +51,18 @@ export default class BaseAdapter extends EventEmitter {
         return this;
     }
 
-    async batchSay(messages: Sayable[], contact?: Contact): Promise<void> {
+    async batchSay(
+        messages: Sayable[],
+        contact?: Contact,
+        interval: number = 0
+    ): Promise<void> {
         for (const message of messages) {
             if (contact) {
-                await contact.say(message).catch(this.logger.error);
+                await contact.say(message);
             } else {
-                await this.bot.say(message).catch(this.logger.error);
+                await this.bot.say(message);
             }
+            await waitFor(interval);
         }
     }
 
@@ -67,9 +73,28 @@ export default class BaseAdapter extends EventEmitter {
             this.logger.error("Target contact not found");
             return;
         }
-        const sayableMessages = await this.convertMessagesToSayable(messages);
+        // make messages group by type
+        const groupedMessages = messages.reduce((acc, cur) => {
+            if (!acc[cur.source]) {
+                acc[cur.source] = [];
+            }
+            acc[cur.source].push(cur);
+            return acc;
+        }, {} as { [key: string]: Message[] });
 
-        await this.batchSay(sayableMessages, target);
+        for (const source in groupedMessages) {
+            const msg = groupedMessages[source];
+            const hint = intl.t("receiveMessageHint", {
+                source,
+                len: msg.length,
+            }) as Sayable;
+            try {
+                const sayableMsg = await this.convertMessagesToSayable(msg);
+                await this.batchSay([hint].concat(sayableMsg), target, 100);
+            } catch (error) {
+                console.error(error);
+            }
+        }
     }
 
     private scanHandler(qrcode: string, status: ScanStatus): void {

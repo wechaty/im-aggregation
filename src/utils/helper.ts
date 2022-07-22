@@ -35,7 +35,7 @@ export async function generateMsgFileName(
 /**
  * extract time from string
  * @param timeString 18:00, 19-00,19.00,19点00
- * @returns 
+ * @returns
  */
 export function extractTimeString(timeString: string) {
     timeString = timeString.replace(/：|-|,|，|\.|。|点/g, ":");
@@ -68,4 +68,15 @@ export function parseTimeString(timeString: string): Date {
     date.setHours(Number(hour));
     date.setMinutes(Number(minute));
     return date;
+}
+
+export async function waitFor(interval: number) {
+    if (interval === 0) return;
+    
+    if (interval < 0 || interval > 10000 || isNaN(interval)) {
+        throw new Error(`Invalid interval: ${interval}`);
+    }
+    return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+    });
 }

@@ -60,13 +60,7 @@ export default class WeChatAdapter extends BaseAdapter {
 
     async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
-
-        msgBundle.push(
-            intl.t("receiveMessageHint", {
-                source: this.profile.source,
-                len: messages.length,
-            })
-        );
+        
         for (const message of messages) {
             switch (message.type) {
                 case MessageType.Text:

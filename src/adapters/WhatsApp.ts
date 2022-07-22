@@ -34,9 +34,6 @@ export default class WhatsAppAdapter extends BaseAdapter {
     async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
-        msgBundle.push(
-            `[${this.profile.source}] You received ${messages.length} messages.`
-        );
         for (const message of messages) {
             switch (message.type) {
                 case MessageType.Text:
@@ -45,7 +42,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     break;
                 case MessageType.Image:
                 case MessageType.Attachment:
-                    // case MessageType.Emoticon:
+                case MessageType.Emoticon:
                     const fileBox = FileBox.fromFile(message.attachment);
                     msgBundle.push(fileBox);
                     break;
@@ -59,7 +56,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     break;
                 case MessageType.Url:
                     const urlLik = new this.bot.UrlLink(
-                        JSON.parse(message.attachment)
+                        JSON.parse(message.content)
                     );
                     msgBundle.push(urlLik);
                     break;

@@ -136,6 +136,50 @@ export default class BaseExtension extends Extension {
         };
     }
 
+    setAggregationStartTime(): Command {
+        const handle = async (time: string) => {
+            try {
+                const { hour, minute } = extractTimeString(time);
+                const config = getAllConfigurations();
+                config.aggregation.startTime = `${hour}:${minute}`;
+                setConfiguration(config);
+                await this.adapter.bot.say(
+                    intl.t("aggregationStartTimeSet", { hour, minute })
+                );
+            } catch (error) {
+                await this.adapter.bot.say(intl.t("invalidTimeFormat"));
+            }
+        }
+        return {
+            name: intl.t("setAggregationStartTime"),
+            description: intl.t("setAggregationStartTimeDescription"),
+            shortcut: "setast",
+            handle,
+        };
+    }
+
+    setAggregationEndTime(): Command {
+        const handle = async (time: string) => {
+            try {
+                const { hour, minute } = extractTimeString(time);
+                const config = getAllConfigurations();
+                config.aggregation.endTime = `${hour}:${minute}`;
+                setConfiguration(config);
+                await this.adapter.bot.say(
+                    intl.t("aggregationEndTimeSet", { hour, minute })
+                );
+            } catch (error) {
+                await this.adapter.bot.say(intl.t("invalidTimeFormat"));
+            }
+        }
+        return {
+            name: intl.t("setAggregationEndTime"),
+            description: intl.t("setAggregationEndTimeDescription"),
+            shortcut: "setaet",
+            handle,
+        };
+    }
+
     setForwardTargetAccount(): Command {
         const handle = async (contact: Contact) => {
             if (!contact || typeof contact === "string") {
@@ -169,6 +213,8 @@ export default class BaseExtension extends Extension {
         this.adapter.registerCommand(this.showInfomation());
         this.adapter.registerCommand(this.logoutCommand());
         this.adapter.registerCommand(this.setForwardTime());
+        this.adapter.registerCommand(this.setAggregationStartTime());
+        this.adapter.registerCommand(this.setAggregationEndTime());
         this.adapter.registerCommand(this.setForwardTargetAccount());
     }
 }

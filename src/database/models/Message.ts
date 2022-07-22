@@ -8,22 +8,11 @@ class Message extends Model {
     declare listener: string;
     declare content: string;
     declare type: number;
-    declare source: Date;
-    declare sentAt: number;
+    declare source: string;
+    declare sentAt: Date;
     declare attachment: string;
     declare createdAt: Date;
     declare updatedAt: Date;
-}
-
-export interface MessagePayload {
-    talker?: string;
-    listener?: string;
-    content?: string;
-    type: string;
-    sentAt: string;
-    aid: string;
-    source: Date;
-    attachment?: string;
 }
 
 Message.init(

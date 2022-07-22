@@ -24,8 +24,8 @@ async function forwardHandler() {
             parseTimeString(endTime)
         );
         await adapter.forwardMessages(messages);
-    } else {
-        logger.error(`Adapter for ${config.targetSource} not found`);
+    } else if (!adapter) {
+        logger.error("Adapter not initialized");
     }
 }
 
@@ -53,7 +53,7 @@ export async function setup() {
         `${minute} ${hour} * * *`,
         forwardHandler
     );
-    
+
     onForwardTimeUpdate((timeString: string) => {
         const { hour, minute } = extractTimeString(timeString);
 
@@ -64,7 +64,7 @@ export async function setup() {
             `${minute} ${hour} * * *`,
             forwardHandler
         );
-    })
+    });
 
     // adapter.on("updateScheduleJob", ({ hour, minute }) => {
     //     forwardJob.cancel();

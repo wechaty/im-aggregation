@@ -38,9 +38,6 @@ export default class WeComAdapter extends BaseAdapter {
     async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
-        msgBundle.push(
-            `[${this.profile.source}] You received ${messages.length} messages.`
-        );
         for (const message of messages) {
             switch (message.type) {
                 case MessageType.Text:
@@ -63,7 +60,7 @@ export default class WeComAdapter extends BaseAdapter {
                     break;
                 case MessageType.Url:
                     const urlLik = new this.bot.UrlLink(
-                        JSON.parse(message.attachment)
+                        JSON.parse(message.content)
                     );
                     msgBundle.push(urlLik);
                     break;
@@ -104,6 +101,21 @@ export default class WeComAdapter extends BaseAdapter {
                 buildOpt.attachment = filePath;
                 break;
             case MessageType.Emoticon:
+                const emoticonFileBox = await message.toFileBox();
+                const emoticonFileName = await generateMsgFileName(
+                    message,
+                    emoticonFileBox
+                );
+                const emoticonFilePath = path.join(
+                    this.downloadsFolder,
+                    emoticonFileName.replace(
+                        path.extname(emoticonFileName),
+                        ".gif"
+                    )
+                );
+                if (!fs.existsSync(emoticonFilePath))
+                    await emoticonFileBox.toFile(emoticonFilePath);
+                buildOpt.attachment = emoticonFilePath;
                 break;
             case MessageType.Url:
                 const url = await message.toUrlLink();

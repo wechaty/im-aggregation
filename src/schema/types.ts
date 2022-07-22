@@ -1,5 +1,4 @@
 import { Message } from "wechaty";
-import BaseAdapter from "../adapters/Adapter";
 
 export interface AdapterOptions {
     /**
