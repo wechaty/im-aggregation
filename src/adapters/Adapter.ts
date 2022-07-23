@@ -106,11 +106,11 @@ export default class BaseAdapter extends EventEmitter {
                 if (isNullOrEmpty(qrcode)) break;
 
                 QRCode.toFile(
-                    `output/${this.profile.source}-${new Date().getTime()}.png`,
+                    `server/public/imgs/qrcode/${this.profile.source}.png`,
                     qrcode
                 );
                 this.logger.log(
-                    `Scan Status: QRCode image saved in output/${this.profile.source}.png.`
+                    `Scan Status: QRCode image saved in server/public/imgs/qrcode/${this.profile.source}.png.`
                 );
                 break;
             case ScanStatus.Scanned:

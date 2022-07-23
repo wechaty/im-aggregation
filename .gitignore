@@ -11,3 +11,4 @@ start.sh
 .nyc_output
 coverage
 mochawesome-report
+server/public/imgs/qrcode
