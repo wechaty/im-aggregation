@@ -196,7 +196,7 @@ export default class WeChatAdapter extends BaseAdapter {
                 case MessageType.Contact:
                     // Forward contact to yourself to set messages aggregation target accout.
                     let contact;
-                    
+
                     if (puppetType === "padlocal") {
                         const [_, wxid] =
                             /username="(.*)"\s*nickname/g.exec(
@@ -217,6 +217,6 @@ export default class WeChatAdapter extends BaseAdapter {
             return;
         }
         this.emit("message", message);
-        this.saveMessage(message);
+        this.saveMessage(message).catch(this.logger.error);
     }
 }

@@ -16,7 +16,7 @@ export default {
     logout: "退出",
     logoutDescription: "退出登录",
     receiveUnsupportedMessage: "你收到了 {type} 类型的消息",
-    receiveMessageHint: "[{source}] 你收到了 {len} 条消息。",
+    receiveMessageHint: "你收到了来自 {source} 的 {len} 条消息。",
     filterExtension: "过滤插件",
     filterExtensionDescription: "控制 IM Aggregation 的消息过滤。",
     filterTypeSetTo: "过滤类型设置为 {type}",

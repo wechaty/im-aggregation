@@ -157,7 +157,7 @@ export default class BaseAdapter extends EventEmitter {
             return;
         }
         this.emit("message", message);
-        this.saveMessage(message);
+        this.saveMessage(message).catch(this.logger.error);
     }
 
     private async heatBeatHandler(data: any): Promise<void> {
@@ -172,7 +172,7 @@ export default class BaseAdapter extends EventEmitter {
         throw new Error("Not implemented");
     }
 
-    saveMessage(message: MessageInterface): void {
+    async saveMessage(message: MessageInterface): Promise<void> {
         throw new Error("Not implemented");
     }
 
