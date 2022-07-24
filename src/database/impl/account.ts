@@ -18,7 +18,7 @@ export async function loginAccount(
         .createHash("md5")
         .update(`${user.id}-${source}`)
         .digest("hex");
-    
+
     const [account] = await Account.findOrBuild({
         where: {
             id: aid,
@@ -35,6 +35,15 @@ export async function loginAccount(
 
     logger.info(`${source} User [${user.name()}] logged in.`);
     return aid;
+}
+
+export async function getAccount(source: string) {
+    const account = await Account.findOne({
+        where: {
+            source,
+        },
+    });
+    return account;
 }
 
 export async function logoutAccount(
