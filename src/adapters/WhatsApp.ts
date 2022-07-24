@@ -31,7 +31,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
         super(bot);
     }
 
-    async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
+    override async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
         for (const message of messages) {
@@ -72,9 +72,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
         return msgBundle;
     }
 
-    async saveMessage(message: MessageInterface): Promise<void> {
-        // TODO: Save message to database.
-        // 要将微信的silk格式转为统一格式！
+    override async saveMessage(message: MessageInterface): Promise<void> {
         const buildOpt = {
             type: message.type(),
             talker: message.talker()?.name(),

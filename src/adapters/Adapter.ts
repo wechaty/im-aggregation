@@ -97,7 +97,7 @@ export default class BaseAdapter extends EventEmitter {
         }
     }
 
-    private scanHandler(qrcode: string, status: ScanStatus): void {
+    scanHandler(qrcode: string, status: ScanStatus): void {
         this.logger.log(`Scan QR Code to login: ${status}`);
 
         switch (status) {
@@ -125,17 +125,17 @@ export default class BaseAdapter extends EventEmitter {
         }
     }
 
-    private async loginHandler(user: ContactSelfInterface): Promise<void> {
+    async loginHandler(user: ContactSelfInterface): Promise<void> {
         const aid = await loginAccount(user, this.profile.source);
         this.profile.id = aid;
         this.bot.say(`[${new Date().toLocaleString()}] Login Successfully!`);
     }
 
-    private async logoutHandler(user: ContactSelfInterface): Promise<void> {
+    async logoutHandler(user: ContactSelfInterface): Promise<void> {
         logoutAccount(user, this.profile.source);
     }
 
-    private async messageHandler(message: MessageInterface): Promise<void> {
+    async messageHandler(message: MessageInterface): Promise<void> {
         const self = message.talker().self() && message.listener()?.self();
         if (self) {
             switch (message.type()) {

@@ -58,9 +58,11 @@ export default class WeChatAdapter extends BaseAdapter {
         super(bot);
     }
 
-    async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
+    override async convertMessagesToSayable(
+        messages: Message[]
+    ): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
-        
+
         for (const message of messages) {
             switch (message.type) {
                 case MessageType.Text:
@@ -105,7 +107,7 @@ export default class WeChatAdapter extends BaseAdapter {
         return msgBundle;
     }
 
-    async saveMessage(message: MessageInterface): Promise<void> {
+    override async saveMessage(message: MessageInterface): Promise<void> {
         // TODO: Save message to database.
         // 要将微信的silk格式转为统一格式！
         const buildOpt = {
@@ -179,5 +181,42 @@ export default class WeChatAdapter extends BaseAdapter {
         }
 
         await DBMessage.saveMessage(buildOpt);
+    }
+
+    override async messageHandler(message: MessageInterface): Promise<void> {
+        const self = message.talker().self() && message.listener()?.self();
+        const puppetType = process.env.WECHAT_TOKEN_TYPE;
+        if (self) {
+            switch (message.type()) {
+                case MessageType.Text:
+                    const str = message.text();
+                    const [cmd, ...args] = str.split(" ");
+                    this.invokeCommand(cmd, ...args);
+                    return;
+                case MessageType.Contact:
+                    // Forward contact to yourself to set messages aggregation target accout.
+                    let contact;
+                    
+                    if (puppetType === "padlocal") {
+                        const [_, wxid] =
+                            /username="(.*)"\s*nickname/g.exec(
+                                message.text()
+                            ) || [];
+                        if (wxid) {
+                            contact = await this.bot.Contact.find({ id: wxid });
+                        }
+                    } else contact = await message.toContact();
+
+                    await this.invokeCommand("setfta", contact);
+                    return;
+                default:
+                    break;
+            }
+        }
+        if (!this.filter(message)) {
+            return;
+        }
+        this.emit("message", message);
+        this.saveMessage(message);
     }
 }

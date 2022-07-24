@@ -19,7 +19,7 @@ class Intl {
         let msg = source[key];
         if (!msg) return key;
         for (const key in payload) {
-            const value = payload[key];
+            const value = payload[key] || "";
             msg = msg.replace(`{${key}}`, value.toString());
         }
         return msg;
