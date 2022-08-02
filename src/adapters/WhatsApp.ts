@@ -31,7 +31,9 @@ export default class WhatsAppAdapter extends BaseAdapter {
         super(bot);
     }
 
-    override async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
+    override async convertMessagesToSayable(
+        messages: Message[]
+    ): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
         for (const message of messages) {
@@ -43,11 +45,20 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 case MessageType.Image:
                 case MessageType.Attachment:
                 case MessageType.Emoticon:
-                    const fileBox = FileBox.fromFile(message.attachment);
+                case MessageType.Video:
+                    const fileBox = FileBox.fromFile(
+                        message.attachment,
+                        message.content
+                    );
                     msgBundle.push(fileBox);
                     break;
                 case MessageType.Audio:
-                    const voiceFileBox = FileBox.fromFile(message.attachment);
+                    const voiceFileBox = FileBox.fromFile(
+                        message.attachment,
+                        `[${message.sentAt.getHours()}:${message.sentAt.getMinutes()}]-${
+                            message.talker
+                        }.wav`
+                    );
                     const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
                         duration,
@@ -96,6 +107,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 const filePath = path.join(this.downloadsFolder, fileName);
                 if (!fs.existsSync(filePath)) await fileBox.toFile(filePath);
                 buildOpt.attachment = filePath;
+                buildOpt.content = fileBox.name;
                 break;
             case MessageType.Audio:
                 const voiceFileBox = await message.toFileBox();
@@ -107,6 +119,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 if (!fs.existsSync(voicePath))
                     await voiceFileBox.toFile(voicePath);
                 buildOpt.attachment = await convertOgaToWay(voicePath);
+                buildOpt.content = voiceFileBox.name;
                 break;
             case MessageType.Url:
                 const url = await message.toUrlLink();

@@ -50,7 +50,12 @@ export default class BaseAdapter extends EventEmitter {
         this.logger.info("Bot started");
         return this;
     }
-
+    /**
+     * batch say messages to target contact
+     * @param messages Messages to be sent
+     * @param contact people to send messages to
+     * @param interval interval between each message
+     */
     async batchSay(
         messages: Sayable[],
         contact?: Contact,
@@ -92,7 +97,7 @@ export default class BaseAdapter extends EventEmitter {
                 const sayableMsg = await this.convertMessagesToSayable(msg);
                 await this.batchSay([hint].concat(sayableMsg), target, 100);
             } catch (error) {
-                console.error(error);
+                this.logger.error(error);
             }
         }
     }
@@ -132,7 +137,7 @@ export default class BaseAdapter extends EventEmitter {
     }
 
     async logoutHandler(user: ContactSelfInterface): Promise<void> {
-        logoutAccount(user, this.profile.source);
+        return logoutAccount(user, this.profile.source);
     }
 
     async messageHandler(message: MessageInterface): Promise<void> {

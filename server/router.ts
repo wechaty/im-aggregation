@@ -40,7 +40,7 @@ router.get("/info", async (_, res) => {
         const stat = fs.statSync(qrcodePath);
         const pro = status.find((p) => p.name === adapterName);
         const account = await getAccount(adapterName);
-        
+
         info.push({
             name: adapterName,
             modified: stat.mtime,
@@ -65,7 +65,9 @@ router.post("/exit", async (req, res) => {
 router.post("/restart", async (req, res) => {
     const adapter = req.body.adapter;
     try {
-        await restartAdapterProcess(adapter);
+        const list = await getAdapterProcessStatus();
+        await restartAdapterProcess(adapter, list);
+        
         res.json(JSONResponse.success()).end();
     } catch (err: any) {
         res.json(JSONResponse.error(err.message)).end();

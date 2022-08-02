@@ -1,3 +1,4 @@
+import "dotenv/config";
 import schedule from "node-schedule";
 import BaseAdapter from "./adapters/Adapter";
 import { getAllConfigurations } from "./database/impl/configuration";
@@ -47,7 +48,7 @@ export async function setup() {
 
     let config = getAllConfigurations();
     let { forwardTime } = config;
-    let [hour, minute] = forwardTime.split(":");
+    let { hour, minute } = extractTimeString(forwardTime);
 
     var forwardJob = schedule.scheduleJob(
         `${minute} ${hour} * * *`,
@@ -58,22 +59,13 @@ export async function setup() {
         const { hour, minute } = extractTimeString(timeString);
 
         forwardJob.cancel();
-        logger.info("Update schedule job");
+        logger.info(`${targetAdapter} Update schedule job: ${minute} ${hour} * * *`);
 
         forwardJob = schedule.scheduleJob(
             `${minute} ${hour} * * *`,
             forwardHandler
         );
     });
-
-    // adapter.on("updateScheduleJob", ({ hour, minute }) => {
-    //     forwardJob.cancel();
-    //     logger.info("Update schedule job");
-    //     forwardJob = schedule.scheduleJob(
-    //         `${minute} ${hour} * * *`,
-    //         forwardHandler
-    //     );
-    // });
 }
 
 setup();

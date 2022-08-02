@@ -32,9 +32,19 @@ export async function generateMsgFileName(
     // }
     return `${typeName}-${isNullOrEmpty(md5) ? dateString : md5}${extName}`;
 }
+
+export async function generateMsgFileReadableName(msg: MessageInterface) {
+    const talker = msg.talker()?.name();
+    const listener = msg.listener()?.name();
+    const room = msg.room();
+    if (room) {
+        return `${msg.date().getHours()}:${msg.date().getMinutes()} ${talker}`;
+    }
+}
+
 /**
  * extract time from string
- * @param timeString 18:00, 19-00,19.00,19点00
+ * @param timeString 18:00, 19-00, 19.00, 19点00
  * @returns
  */
 export function extractTimeString(timeString: string) {
@@ -72,7 +82,7 @@ export function parseTimeString(timeString: string): Date {
 
 export async function waitFor(interval: number) {
     if (interval === 0) return;
-    
+
     if (interval < 0 || interval > 10000 || isNaN(interval)) {
         throw new Error(`Invalid interval: ${interval}`);
     }

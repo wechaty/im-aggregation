@@ -32,19 +32,34 @@ export async function exitAdapterProcess(name: string): Promise<void> {
     });
 }
 
-export async function restartAdapterProcess(name: string): Promise<void> {
+export async function restartAdapterProcess(
+    name: string,
+    list: pm2.ProcessDescription[]
+): Promise<void> {
     return new Promise((resolve, reject) => {
         pm2.connect((err) => {
             if (err) {
                 reject(err);
             }
-
-            pm2.restart(name, (err) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve();
-            });
+            // not found in list
+            if (!list.find((p) => p.name === name)) {
+                pm2.start({
+                    name,
+                    script: `yarn run dev --adapter ${name}`,
+                }, (err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve();
+                });
+            } else {
+                pm2.restart(name, (err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve();
+                });
+            }
         });
     });
 }

@@ -4,9 +4,11 @@ import path from "path";
 import { Sayable, WechatyBuilder, WechatyOptions } from "wechaty";
 import PuppetPadlocal from "wechaty-puppet-padlocal";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
-import intl from "../i18n/translation";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
+import Qiniu from "../database/storage/Qiniu";
+import Storage from "../database/storage/Storage";
+import intl from "../i18n/translation";
 import {
     MessageType,
     MessageTypeName,
@@ -17,6 +19,7 @@ import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeChatAdapter extends BaseAdapter {
+    storage: Storage;
     static Init(): WechatyInterface {
         let options: WechatyOptions;
         const type = process.env.WECHAT_TOKEN_TYPE;
@@ -56,6 +59,16 @@ export default class WeChatAdapter extends BaseAdapter {
     constructor() {
         const bot = WeChatAdapter.Init();
         super(bot);
+        const storageType = process.env.STORAGE_TYPE || "";
+        switch (storageType) {
+            case "qiniu":
+                this.storage = new Qiniu();
+                break;
+            default:
+                throw new Error(
+                    "Storage type is not set. Please check your environment variables."
+                );
+        }
     }
 
     override async convertMessagesToSayable(
@@ -70,18 +83,28 @@ export default class WeChatAdapter extends BaseAdapter {
                     msgBundle.push(message.content);
                     break;
                 case MessageType.Image:
+                case MessageType.Video:
                 case MessageType.Attachment:
-                    const fileBox = FileBox.fromFile(message.attachment);
+                    const fileBox = FileBox.fromFile(
+                        message.attachment,
+                        message.content
+                    );
                     msgBundle.push(fileBox);
                     break;
                 case MessageType.Emoticon:
-                    const emoticonFileBox = FileBox.fromFile(
+                    const remoteUrl = await this.storage.upload(
                         message.attachment
                     );
+                    const emoticonFileBox = FileBox.fromUrl(remoteUrl);
                     msgBundle.push(emoticonFileBox);
                     break;
                 case MessageType.Audio:
-                    const voiceFileBox = FileBox.fromFile(message.attachment);
+                    const voiceFileBox = FileBox.fromFile(
+                        message.attachment,
+                        `[${message.sentAt.getHours()}:${message.sentAt.getMinutes()}]-${
+                            message.talker
+                        }.wav`
+                    );
                     const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
                         duration,
@@ -125,13 +148,14 @@ export default class WeChatAdapter extends BaseAdapter {
             case MessageType.Text:
                 break;
             case MessageType.Image:
-            case MessageType.Attachment:
             case MessageType.Video:
+            case MessageType.Attachment:
                 const fileBox = await message.toFileBox();
                 const fileName = await generateMsgFileName(message, fileBox);
                 const filePath = path.join(this.downloadsFolder, fileName);
                 if (!fs.existsSync(filePath)) await fileBox.toFile(filePath);
                 buildOpt.attachment = filePath;
+                buildOpt.content = fileBox.name;
                 break;
             case MessageType.Emoticon:
                 const emoticonFileBox = await message.toFileBox();
@@ -149,6 +173,7 @@ export default class WeChatAdapter extends BaseAdapter {
                 if (!fs.existsSync(emoticonFilePath))
                     await emoticonFileBox.toFile(emoticonFilePath);
                 buildOpt.attachment = emoticonFilePath;
+                buildOpt.content = emoticonFileBox.name;
                 break;
             case MessageType.Audio:
                 const voiceFileBox = await message.toFileBox();
@@ -160,6 +185,7 @@ export default class WeChatAdapter extends BaseAdapter {
                 if (!fs.existsSync(voicePath))
                     await voiceFileBox.toFile(voicePath);
                 buildOpt.attachment = await convertSilkToWav(voicePath);
+                buildOpt.content = voiceFileBox.name;
                 break;
             case MessageType.Url:
                 const talkerType = message.talker().type();

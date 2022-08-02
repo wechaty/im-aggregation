@@ -5,6 +5,8 @@ import { Sayable, WechatyBuilder } from "wechaty";
 import { MessageInterface, WechatyInterface } from "wechaty/impls";
 import * as DBMessage from "../database/impl/message";
 import Message from "../database/models/Message";
+import Qiniu from "../database/storage/Qiniu";
+import Storage from "../database/storage/Storage";
 import intl from "../i18n/translation";
 import { MessageType, MessageTypeName } from "../schema/types";
 import { generateMsgFileName, isNullOrEmpty } from "../utils/helper";
@@ -12,6 +14,7 @@ import { convertSilkToWav, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
 
 export default class WeComAdapter extends BaseAdapter {
+    storage: Storage;
     static Init(): WechatyInterface {
         const token = process.env.WECOM_TOKEN || "";
 
@@ -33,25 +36,51 @@ export default class WeComAdapter extends BaseAdapter {
     constructor() {
         const bot = WeComAdapter.Init();
         super(bot);
+        const storageType = process.env.STORAGE_TYPE || "";
+        switch (storageType) {
+            case "qiniu":
+                this.storage = new Qiniu();
+                break;
+            default:
+                throw new Error(
+                    "Storage type is not set. Please check your environment variables."
+                );
+        }
     }
 
-    override async convertMessagesToSayable(messages: Message[]): Promise<Sayable[]> {
+    override async convertMessagesToSayable(
+        messages: Message[]
+    ): Promise<Sayable[]> {
         const msgBundle: Sayable[] = [];
 
         for (const message of messages) {
             switch (message.type) {
                 case MessageType.Text:
-                    // TODO: Extension.
                     msgBundle.push(message.content);
                     break;
                 case MessageType.Image:
+                case MessageType.Video:
                 case MessageType.Attachment:
-                    // case MessageType.Emoticon:
-                    const fileBox = FileBox.fromFile(message.attachment);
+                    const fileBox = FileBox.fromFile(
+                        message.attachment,
+                        message.content
+                    );
                     msgBundle.push(fileBox);
                     break;
+                case MessageType.Emoticon:
+                    const remoteUrl = await this.storage.upload(
+                        message.attachment
+                    );
+                    const emoticonFileBox = FileBox.fromUrl(remoteUrl);
+                    msgBundle.push(emoticonFileBox);
+                    break;
                 case MessageType.Audio:
-                    const voiceFileBox = FileBox.fromFile(message.attachment);
+                    const voiceFileBox = FileBox.fromFile(
+                        message.attachment,
+                        `[${message.sentAt.getHours()}:${message.sentAt.getMinutes()}]-${
+                            message.talker
+                        }.wav`
+                    );
                     const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
                         duration,
@@ -99,6 +128,7 @@ export default class WeComAdapter extends BaseAdapter {
                 const filePath = path.join(this.downloadsFolder, fileName);
                 if (!fs.existsSync(filePath)) fileBox.toFile(filePath);
                 buildOpt.attachment = filePath;
+                buildOpt.content = fileBox.name;
                 break;
             case MessageType.Emoticon:
                 const emoticonFileBox = await message.toFileBox();
@@ -132,6 +162,7 @@ export default class WeComAdapter extends BaseAdapter {
                 if (!fs.existsSync(voicePath))
                     await voiceFileBox.toFile(voicePath);
                 buildOpt.attachment = await convertSilkToWav(voicePath);
+                buildOpt.content = voiceFileBox.name;
                 break;
             case MessageType.Unknown:
                 // Unknown message type. Return directly.

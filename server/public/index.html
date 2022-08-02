@@ -1,155 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/papercss@1.8.3/dist/paper.min.css"
+        />
+        <link rel="stylesheet" href="./css/style.css" />
+        <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+        <title>IM-Aggregation</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/papercss@1.8.3/dist/paper.min.css">
-    <link rel="stylesheet" href="./css/style.css">
-    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
-    <title>IM-Aggregation</title>
-</head>
-
-<body style="background-image: url(/imgs/bg.png);">
-    <nav class="border fixed split-nav">
-        <div class="nav-brand">
-            <h3><a href="#">IM-Aggregation</a></h3>
-        </div>
-        <div class="collapsible">
-            <div class="collapsible-body">
-                <ul class="inline">
-                    <li><a href="https://github.com/wechaty/im-aggregation#readme">📄 文档</a></li>
-                    <li><a href="https://github.com/TankNee">🫂 关于作者</a></li>
-                    <li><a href="https://github.com/wechaty/im-aggregation">🧱 仓库</a></li>
-                </ul>
+    <body style="background-image: url(/imgs/bg.png)">
+        <nav class="border fixed split-nav">
+            <div class="nav-brand">
+                <h3><a href="#">IM-Aggregation</a></h3>
             </div>
+            <div class="collapsible">
+                <div class="collapsible-body">
+                    <ul class="inline">
+                        <li>
+                            <a
+                                href="https://github.com/wechaty/im-aggregation#readme"
+                                >📄 文档</a
+                            >
+                        </li>
+                        <li>
+                            <a href="https://github.com/TankNee">🫂 关于作者</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/wechaty/im-aggregation"
+                                >🧱 仓库</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="paper container" style="margin: 4.5rem auto">
+            <h1 align="center">🎨 Wechaty 消息聚合应用</h1>
+            <div class="alert alert-success">
+                🚀 请使用下面展示的二维码进行登录。
+            </div>
+            <div id="qrcode" class="row" align="center"></div>
         </div>
-    </nav>
-    <div class="paper container" style="margin: 4.5rem auto;">
-        <h1 align="center">🎨 Wechaty 消息聚合应用</h1>
-        <div class="alert alert-success">🚀 请使用下面展示的二维码进行登录。</div>
-        <div id="qrcode" class="row" align="center"></div>
+        <script>
+            function appendQrCodeCard(info) {
+                // if info.name - card exist, return;
+                if ($(`#${info.name}-card`).length) {
+                    // if modified time changed, update card
+                    if (
+                        new Date(info.modified).getTime().toString() !==
+                            $(`#${info.name}-card`).attr("modifiedTime") ||
+                        new Date(info.loginAt).getTime().toString() !==
+                            $(`#${info.name}-card`).attr("loginAt") ||
+                        info.status !== $(`#${info.name}-card`).attr("status")
+                    ) {
+                        $(`#${info.name}-card`).attr(
+                            "modifiedTime",
+                            new Date(info.modified).getTime().toString()
+                        );
+                        $(
+                            `#${info.name}-card .card-subtitle.qrcode-modifiedTime`
+                        ).text(
+                            `⏰ 二维码生成时间：${new Date(
+                                info.modified
+                            ).toLocaleString()}`
+                        );
 
-    </div>
-    <script>
-        function appendQrCodeCard (info) {
-            // if info.name - card exist, return;
-            if ($(`#${info.name}-card`).length) {
-                // if modified time changed, update card
-                if (new Date(info.modified).getTime().toString() !== $(`#${info.name}-card`).attr('modifiedTime')
-                    || new Date(info.loginAt).getTime().toString() !== $(`#${info.name}-card`).attr('loginAt')
-                    || info.status !== $(`#${info.name}-card`).attr('status')) {
+                        $(`#${info.name}-card`).attr(
+                            "loginAt",
+                            new Date(info.loginAt).getTime().toString()
+                        );
+                        $(
+                            `#${info.name}-card .card-subtitle.account-loginTime`
+                        ).text(
+                            `⏰ 用户上次登录时间：${new Date(
+                                info.loginAt
+                            ).toLocaleString()}`
+                        );
 
-                    $(`#${info.name}-card`).attr('modifiedTime', new Date(info.modified).getTime().toString());
-                    $(`#${info.name}-card .card-subtitle.qrcode-modifiedTime`).text(`⏰ 二维码生成时间：${new Date(info.modified).toLocaleString()}`)
-                    
-                    $(`#${info.name}-card`).attr('loginAt', new Date(info.loginAt).getTime().toString());
-                    $(`#${info.name}-card .card-subtitle.account-loginTime`).text(`⏰ 用户上次登录时间：${new Date(info.loginAt).toLocaleString()}`)
+                        $(`#${info.name}-card img`).attr(
+                            "src",
+                            `${info.url}?t=${new Date(info.modified).getTime()}`
+                        );
 
-                    $(`#${info.name}-card img`).attr("src", `${info.url}?t=${new Date(info.modified).getTime()}`);
+                        $(`#${info.name}-card`).attr("status", info.status);
 
-                    $(`#${info.name}-card`).attr('status', info.status);
+                        $(`#${info.name}-status`).text(
+                            `📜 进程状态：${info.status}`
+                        );
+                        $(`#${info.name}-status`).attr(
+                            "class",
+                            `text-${
+                                info.status === "online" ? "success" : "danger"
+                            }`
+                        );
 
-                    $(`#${info.name}-status`).text(`📜 进程状态：${info.status}`);
-                    $(`#${info.name}-status`).attr('class', `text-${info.status === 'online' ? 'success' : 'danger'}`);
-
-                    if (info.status === 'online') {
-                        $(`#${info.name}-restart-btn`).attr("disabled", "true");
-                    } else {
-                        $(`#${info.name}-restart-btn`).removeAttr("disabled");
+                        if (info.status === "online") {
+                            $(`#${info.name}-restart-btn`).attr(
+                                "disabled",
+                                "true"
+                            );
+                        } else {
+                            $(`#${info.name}-restart-btn`).removeAttr(
+                                "disabled"
+                            );
+                        }
                     }
+                    return;
                 }
-                return;
-            }
-            $("#qrcode").append(`
-                <div align="left" id="${info.name}-card" status="${info.status}" loginAt=${new Date(info.loginAt).getTime()} modifiedTime=${new Date(info.modified).getTime()} style="box-shadow: none;" class="card col-6 col border-primary border-${Math.floor(Math.random() * 5 + 1)}">
-                    <img src="${info.url}?t=${new Date(info.modified).getTime()}" alt="${info.name}">
+                $("#qrcode").append(`
+                <div align="left" id="${info.name}-card" status="${
+                    info.status
+                }" loginAt=${new Date(
+                    info.loginAt
+                ).getTime()} modifiedTime=${new Date(
+                    info.modified
+                ).getTime()} style="box-shadow: none;" class="card col-6 col border-primary border-${Math.floor(
+                    Math.random() * 5 + 1
+                )}">
+                    <img src="${info.url}?t=${new Date(
+                    info.modified
+                ).getTime()}" alt="${info.name}">
 
                     <div class="card-body">
                         <h4 class="card-title">🤖 ${info.name}</h4>
-                        <p class="card-subtitle qrcode-modifiedTime">⏰ 二维码生成时间：${new Date(info.modified).toLocaleString()}</p>
-                        <p class="card-subtitle account-loginTime">⏰ 用户上次登录时间：${new Date(info.loginAt).toLocaleString()}</p>
-                        <p class="text-${info.status === 'online' ? 'success' : 'danger'}" id="${info.name}-status">📜 进程状态：${info.status}</p>
-                        <button id="${info.name}-restart-btn" class="restart-btn" adapter=${info.name} ${info.status === 'online' ? "disabled" : ""} style="margin-bottom: 0.25rem; width: 100%;" adapter=${info.name}>启动</button>
-                        <button style="width: 100%;" class="exit-btn" adapter=${info.name}>退出</button>
+                        <p class="card-subtitle qrcode-modifiedTime">⏰ 二维码生成时间：${new Date(
+                            info.modified
+                        ).toLocaleString()}</p>
+                        <p class="card-subtitle account-loginTime">⏰ 用户上次登录时间：${new Date(
+                            info.loginAt
+                        ).toLocaleString()}</p>
+                        <p class="text-${
+                            info.status === "online" ? "success" : "danger"
+                        }" id="${info.name}-status">📜 进程状态：${
+                    info.status
+                }</p>
+                        <button id="${
+                            info.name
+                        }-restart-btn" class="restart-btn" adapter=${
+                    info.name
+                } ${
+                    info.status === "online" ? "disabled" : ""
+                } style="margin-bottom: 0.25rem; width: 100%;" adapter=${
+                    info.name
+                }>启动</button>
+                        <button style="width: 100%;" class="exit-btn" adapter=${
+                            info.name
+                        }>退出</button>
                     </div>
                 </div>
             `);
-        }
+            }
 
-        function exitProcess (adapter) {
-            $.ajax({
-                url: "/api/v1/exit",
-                type: "POST",
-                data: {
-                    adapter
-                },
-                dataType: "json",
-                success: function (data) {
-                    if (data.status !== 'success') {
-                        alert(data.data);
+            function exitProcess(adapter) {
+                $.ajax({
+                    url: "/api/v1/exit",
+                    type: "POST",
+                    data: {
+                        adapter,
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status !== "success") {
+                            alert(data.data);
+                        }
+                    },
+                });
+            }
+
+            function restartProcess(adapter) {
+                $.ajax({
+                    url: "/api/v1/restart",
+                    type: "POST",
+                    data: {
+                        adapter,
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status !== "success") {
+                            alert(data.data);
+                        }
+                    },
+                });
+            }
+
+            function clearCache(adapter) {
+                $.ajax({
+                    url: "/api/v1/clear",
+                    type: "POST",
+                    data: {
+                        adapter,
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status !== "success") {
+                            alert(data.data);
+                        }
+                    },
+                });
+            }
+
+            function getAdapterInfo() {
+                $.ajax({
+                    url: "/api/v1/info",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        data.data.forEach((info) => appendQrCodeCard(info));
+                    },
+                });
+            }
+
+            $(document).ready(function () {
+                getAdapterInfo();
+                setInterval(getAdapterInfo, 3000);
+                $("#qrcode").on(
+                    "click",
+                    ".card-body .restart-btn",
+                    function () {
+                        const adapter = $(this).attr("adapter");
+                        restartProcess(adapter);
                     }
-                }
+                );
+                $("#qrcode").on("click", ".card-body .exit-btn", function () {
+                    const adapter = $(this).attr("adapter");
+                    exitProcess(adapter);
+                });
             });
-        }
-
-        function restartProcess (adapter) {
-            $.ajax({
-                url: "/api/v1/restart",
-                type: "POST",
-                data: {
-                    adapter
-                },
-                dataType: "json",
-                success: function (data) {
-                    if (data.status !== 'success') {
-                        alert(data.data);
-                    }
-                }
-            });
-        }
-
-        function clearCache (adapter) {
-            $.ajax({
-                url: "/api/v1/clear",
-                type: "POST",
-                data: {
-                    adapter
-                },
-                dataType: "json",
-                success: function (data) {
-                    if (data.status !== 'success') {
-                        alert(data.data);
-                    }
-                }
-            });
-        }
-
-        function getAdapterInfo () {
-            $.ajax({
-                url: "/api/v1/info",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    data.data.forEach(info => appendQrCodeCard(info));
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            getAdapterInfo();
-            setInterval(getAdapterInfo, 3000);
-            $('#qrcode').on("click", ".card-body .restart-btn", function () {
-                const adapter = $(this).attr('adapter');
-                restartProcess(adapter);
-            });
-            $('#qrcode').on("click", ".card-body .exit-btn", function () {
-                const adapter = $(this).attr('adapter');
-                exitProcess(adapter);
-            });
-        });
-    </script>
-</body>
-
+        </script>
+    </body>
 </html>

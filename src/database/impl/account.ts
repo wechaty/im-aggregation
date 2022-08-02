@@ -52,7 +52,7 @@ export async function logoutAccount(
 ): Promise<void> {
     const aid = crypto
         .createHash("md5")
-        .update(`${user.name()}-WeCom`)
+        .update(`${user.name()}-${source}`)
         .digest("hex");
     const account = await Account.findOne({
         where: {

@@ -10,19 +10,22 @@
         "dev": "ts-node src/setup.ts",
         "postinstall": "bash init.sh",
         "compile:wx-voice": "wx-voice compile",
-        "test": "nyc --report=html mocha --reporter mochawesome --require ts-node/register --extension .test.ts --recursive"
+        "test": "nyc --report=html mocha --reporter mochawesome --require ts-node/register --extension .test.ts --recursive",
+        "serve": "ts-node server/app.ts"
     },
     "dependencies": {
         "@juzi/wechaty-puppet": "^1.0.8",
         "@juzi/wechaty-puppet-whatsapp": "^1.0.4",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
+        "dotenv": "^16.0.1",
         "express": "^4.18.1",
         "file-box": "^1.4.15",
         "lodash": "^4.17.21",
         "log4js": "^6.5.2",
         "node-schedule": "^2.1.0",
         "pm2": "^5.2.0",
+        "qiniu": "^7.7.0",
         "qrcode": "^1.5.0",
         "sequelize": "^6.21.0",
         "sqlite3": "^5.0.8",

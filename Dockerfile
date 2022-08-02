@@ -16,4 +16,4 @@ RUN yarn global add ts-node \
     && yarn run compile:wx-voice
 
 EXPOSE 7777
-CMD ["ts-node", "index.ts"]
+CMD ["yarn", "run", "serve"]
