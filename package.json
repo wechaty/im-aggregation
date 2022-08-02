@@ -10,7 +10,7 @@
         "dev": "ts-node src/setup.ts",
         "postinstall": "bash init.sh",
         "compile:wx-voice": "wx-voice compile",
-        "test": "nyc --report=html mocha --reporter mochawesome --require ts-node/register --extension .test.ts --recursive",
+        "test": "nyc --report=html mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./reporter/test.xml --require ts-node/register --extension .test.ts --recursive",
         "serve": "ts-node server/app.ts"
     },
     "dependencies": {
@@ -47,6 +47,7 @@
         "@types/node-schedule": "^2.1.0",
         "@types/qrcode": "^1.4.2",
         "mocha": "^10.0.0",
+        "mocha-junit-reporter": "^2.0.2",
         "mochawesome": "^7.1.3",
         "nyc": "^15.1.0"
     },

@@ -12,3 +12,4 @@ start.sh
 coverage
 mochawesome-report
 server/public/imgs/qrcode
+reporter
