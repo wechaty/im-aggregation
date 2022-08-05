@@ -83,6 +83,16 @@ export default class BaseExtension extends Extension {
                 })
             );
             msgBundle.push(
+                intl.t("aggregationStartTimeHint", {
+                    startTime: configs.aggregation.startTime,
+                })
+            );
+            msgBundle.push(
+                intl.t("aggregationEndTimeHint", {
+                    endTime: configs.aggregation.endTime,
+                })
+            );
+            msgBundle.push(
                 intl.t("baseExtensionForwardTarget", {
                     targetSource: configs.target.source,
                     name: configs.target.name,
@@ -149,7 +159,7 @@ export default class BaseExtension extends Extension {
             } catch (error) {
                 await this.adapter.bot.say(intl.t("invalidTimeFormat"));
             }
-        }
+        };
         return {
             name: intl.t("setAggregationStartTime"),
             description: intl.t("setAggregationStartTimeDescription"),
@@ -171,7 +181,7 @@ export default class BaseExtension extends Extension {
             } catch (error) {
                 await this.adapter.bot.say(intl.t("invalidTimeFormat"));
             }
-        }
+        };
         return {
             name: intl.t("setAggregationEndTime"),
             description: intl.t("setAggregationEndTimeDescription"),
@@ -183,8 +193,13 @@ export default class BaseExtension extends Extension {
     setForwardTargetAccount(): Command {
         const handle = async (contact: Contact) => {
             if (!contact || typeof contact === "string") {
-                await this.adapter.bot.say(intl.t("invalidContact"));
-                return;
+                // await this.adapter.bot.say(intl.t("invalidContact"));
+                const self = await this.adapter.bot.Contact.find({
+                    id: this.adapter.profile.id,
+                });
+                if (self) {
+                    contact = self;
+                } else return;
             }
             const config = getAllConfigurations();
             config.target = {
@@ -201,7 +216,9 @@ export default class BaseExtension extends Extension {
         };
         return {
             name: intl.t("setForwardTargetAccount"),
-            description: intl.t("setForwardTargetAccountDescription"),
+            description: intl.t("setForwardTargetAccountDescription", {
+                cmd: "setfta",
+            }),
             shortcut: "setfta",
             handle,
         };

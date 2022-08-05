@@ -131,8 +131,8 @@ export default class BaseAdapter extends EventEmitter {
     }
 
     async loginHandler(user: ContactSelfInterface): Promise<void> {
-        const aid = await loginAccount(user, this.profile.source);
-        this.profile.id = aid;
+        await loginAccount(user, this.profile.source);
+        this.profile.id = user.id;
         this.bot.say(`[${new Date().toLocaleString()}] Login Successfully!`);
     }
 

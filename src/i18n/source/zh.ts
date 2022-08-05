@@ -9,6 +9,8 @@ export default {
     showExtensionDescription: "显示插件的详细信息",
     adapterInfo: "当前平台为 {source}",
     baseExtensionForwardTime: "转发时间：{forwardTime}",
+    aggregationStartTimeHint: "消息聚合开始时间点：{startTime}",
+    aggregationEndTimeHint: "消息聚合结束时间点：{endTime}",
     baseExtensionForwardTarget:
         "转发目标平台：{targetSource}，目标用户：{name}",
     showInfomation: "显示信息",
@@ -34,7 +36,7 @@ export default {
     aliasContactNotFound: "未找到别名为 {alias} 的联系人",
     setForwardTargetAccount: "设置转发目标账号",
     setForwardTargetAccountDescription:
-        "设置消息聚合的目标，且只能是联系人，不能是群组，请将目标的联系人卡片发送到本会话。",
+        "设置消息聚合的目标，且只能是联系人，不能是群组，请将目标的联系人卡片发送到本会话。若要设置本人为消息聚合的目标，请直接发送 {cmd}",
     blacklistAppended: "黑名单已添加：{alias}",
     appendBlacklist: "添加黑名单",
     appendBlacklistDescription: "添加一个联系人到黑名单",

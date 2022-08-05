@@ -3,6 +3,7 @@ import db from "../db";
 
 class Account extends Model {
     declare id: string;
+    declare name: string;
     declare status: string;
     declare source: string;
     declare loginAt: Date;
@@ -15,6 +16,9 @@ Account.init(
         id: {
             type: DataTypes.STRING,
             primaryKey: true,
+        },
+        name: {
+            type: DataTypes.STRING,
         },
         status: {
             type: DataTypes.STRING,

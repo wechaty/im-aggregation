@@ -11,8 +11,11 @@ import { MessageType, MessageTypeName } from "../schema/types";
 import { generateMsgFileName } from "../utils/helper";
 import { convertOgaToWay, getDuration } from "../utils/voice";
 import BaseAdapter from "./Adapter";
+import Qiniu from "../database/storage/Qiniu";
+import Storage from "../database/storage/Storage";
 
 export default class WhatsAppAdapter extends BaseAdapter {
+    storage: Storage;
     static Init(): WechatyInterface {
         const puppet = new PuppetWhatsapp({
             puppeteerOptions: {
@@ -29,6 +32,16 @@ export default class WhatsAppAdapter extends BaseAdapter {
     constructor() {
         const bot = WhatsAppAdapter.Init();
         super(bot);
+        const storageType = process.env.STORAGE_TYPE || "";
+        switch (storageType) {
+            case "qiniu":
+                this.storage = new Qiniu();
+                break;
+            default:
+                throw new Error(
+                    "Storage type is not set. Please check your environment variables."
+                );
+        }
     }
 
     override async convertMessagesToSayable(
@@ -46,10 +59,11 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 case MessageType.Attachment:
                 case MessageType.Emoticon:
                 case MessageType.Video:
-                    const fileBox = FileBox.fromFile(
-                        message.attachment,
-                        message.content
-                    );
+                    const remoteUrl = await this.storage.upload(message.attachment);
+                    const fileBox = FileBox.fromUrl(remoteUrl);
+                    // const fileBox = FileBox.fromFile(
+                    //     message.attachment
+                    // );
                     msgBundle.push(fileBox);
                     break;
                 case MessageType.Audio:

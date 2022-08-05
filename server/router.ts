@@ -9,12 +9,17 @@ import {
     restartAdapterProcess,
 } from "./service";
 
+interface user {
+    status: string;
+    name: string;
+}
 interface AdapterInfo {
     name: string;
     modified: Date;
     url: string;
     status?: string;
     loginAt?: Date;
+    user: user;
 }
 
 const router = Router();
@@ -47,6 +52,10 @@ router.get("/info", async (_, res) => {
             url: qrcodePath.replace(`${__dirname}/public`, ""),
             status: pro?.pm2_env?.status || "Not Running",
             loginAt: account?.loginAt,
+            user: {
+                status: account?.status || "offline",
+                name: account?.name || "",
+            }
         });
     }
     res.json(JSONResponse.success(info)).end();
@@ -67,7 +76,7 @@ router.post("/restart", async (req, res) => {
     try {
         const list = await getAdapterProcessStatus();
         await restartAdapterProcess(adapter, list);
-        
+
         res.json(JSONResponse.success()).end();
     } catch (err: any) {
         res.json(JSONResponse.error(err.message)).end();
