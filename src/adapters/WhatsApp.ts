@@ -20,7 +20,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
         const puppet = new PuppetWhatsapp({
             puppeteerOptions: {
                 puppeteer: {
-                    headless: false,
+                    headless: true,
                 },
             },
         });
