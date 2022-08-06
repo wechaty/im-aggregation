@@ -39,7 +39,7 @@ router.get("/info", async (_, res) => {
             `./public/imgs/qrcode/${adapterName}.png`
         );
         if (!fs.existsSync(qrcodePath)) {
-            qrcodePath = path.resolve(__dirname, "./public/imgs/empty.jpg");
+            qrcodePath = path.resolve(__dirname, "./public/imgs/qrcode/empty.jpg");
         }
 
         const stat = fs.statSync(qrcodePath);
