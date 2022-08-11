@@ -165,6 +165,7 @@ export default class WeComAdapter extends BaseAdapter {
                 buildOpt.content = voiceFileBox.name;
                 break;
             case MessageType.Unknown:
+            case MessageType.Recalled:
                 // Unknown message type. Return directly.
                 return;
             default:

@@ -7,6 +7,7 @@ import BaseExtension from "./extensions/BaseExtension";
 import FilterExtension from "./extensions/FilterExtension";
 import { extractTimeString, parseTimeString } from "./utils/helper";
 import log4js from "./utils/logger";
+import pm2 from "pm2";
 import { onForwardTimeUpdate } from "./utils/watcher";
 
 const logger = log4js.getLogger("Setup");
@@ -59,7 +60,9 @@ export async function setup() {
         const { hour, minute } = extractTimeString(timeString);
 
         forwardJob.cancel();
-        logger.info(`${targetAdapter} Update schedule job: ${minute} ${hour} * * *`);
+        logger.info(
+            `${targetAdapter} Update schedule job: ${minute} ${hour} * * *`
+        );
 
         forwardJob = schedule.scheduleJob(
             `${minute} ${hour} * * *`,
@@ -67,5 +70,20 @@ export async function setup() {
         );
     });
 }
+
+/**
+ * before exit, make adapter log out.
+ */
+process.on("SIGINT", (code) => {
+    logger.info(`${adapter.profile.source} is going to exit with code ${code}`);
+    if (adapter) {
+        adapter
+            .stop()
+            .catch(logger.error)
+            .finally(() => logger.info(`${adapter.profile.source} stopped`));
+    } else {
+        logger.info("No adapter to stop");
+    }
+});
 
 setup();

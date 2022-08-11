@@ -714,10 +714,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@juzi/wechaty-puppet-whatsapp@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.npmmirror.com/@juzi/wechaty-puppet-whatsapp/-/wechaty-puppet-whatsapp-1.0.4.tgz#8916a69b683b56bc0c82b40bb98c5e8ce061dd43"
-  integrity sha512-L5nyw6g81zmpX2vzcKl6yM5mjn8AWNlZ31viLvM1NjZIj7Zw7aQ71ztMYoVBckqfqUyz3/s4EhVvWejKJCH8/A==
+"@juzi/wechaty-puppet-whatsapp@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@juzi/wechaty-puppet-whatsapp/-/wechaty-puppet-whatsapp-1.0.5.tgz#455c766c83be9603e78134abf3779c21ab0907dc"
+  integrity sha512-sFTkfTVRSAn98roEWVErtc8VZADcmyNmK8l9oRdTDUrAAT96nNyjPMas7PLcOzg0bpmCxU5X5SDcsgAlTukrDQ==
   dependencies:
     "@juzi/whatsapp-web.js" "^1.16.14"
     ee-ts "^1.0.2"
@@ -729,10 +729,10 @@
     rxjs "^7.5.5"
     type-fest "^2.12.2"
 
-"@juzi/wechaty-puppet@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.npmmirror.com/@juzi/wechaty-puppet/-/wechaty-puppet-1.0.8.tgz#3de022dddaec4ce753245d76ac444c27cd243abc"
-  integrity sha512-NaxUPAKne2KbsSO+vzdAC0+J3WTxOJ3x9vJ0RuFhzLiYzlQEpaI2JUPaSwPFqo2NofHAKgpPwGNvQnivmLAhlg==
+"@juzi/wechaty-puppet@^1.0.25":
+  version "1.0.25"
+  resolved "https://registry.npmjs.org/@juzi/wechaty-puppet/-/wechaty-puppet-1.0.25.tgz#f21cc3622fa9bb30de7eb5f134add2b6d6ffe050"
+  integrity sha512-1WVvKtEmw7sQ8GH3DnC0xqFmeRqCt7vHfC8ADPyitAW+Xbws7yZBU5rTMq11Uo80RxFqIVzyqvy0ZijD8uGPiQ==
   dependencies:
     "@alloc/quick-lru" "^5.2.0"
     brolog "^1.14.2"

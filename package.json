@@ -8,14 +8,14 @@
     "private": false,
     "scripts": {
         "dev": "ts-node src/setup.ts",
-        "postinstall": "bash init.sh",
+        "postinstall": "yarn run compile:wx-voice",
         "compile:wx-voice": "wx-voice compile",
         "test": "nyc --report=html mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./reporter/test.xml --require ts-node/register --extension .test.ts --recursive",
         "serve": "ts-node server/app.ts"
     },
     "dependencies": {
-        "@juzi/wechaty-puppet": "^1.0.8",
-        "@juzi/wechaty-puppet-whatsapp": "^1.0.4",
+        "@juzi/wechaty-puppet": "^1.0.25",
+        "@juzi/wechaty-puppet-whatsapp": "^1.0.5",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
         "dotenv": "^16.0.1",

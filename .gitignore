@@ -13,3 +13,4 @@ coverage
 mochawesome-report
 server/public/imgs/qrcode/*.png
 reporter
+.vscode

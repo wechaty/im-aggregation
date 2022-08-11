@@ -50,6 +50,14 @@ export default class BaseAdapter extends EventEmitter {
         this.logger.info("Bot started");
         return this;
     }
+
+    async stop(): Promise<BaseAdapter> {
+        await this.bot.logout();
+        await this.bot.stop();
+        this.logger.info("Bot stopped");
+        return this;
+    }
+
     /**
      * batch say messages to target contact
      * @param messages Messages to be sent

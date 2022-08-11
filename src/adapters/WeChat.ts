@@ -197,6 +197,7 @@ export default class WeChatAdapter extends BaseAdapter {
                 buildOpt.attachment = url.payload.url;
                 break;
             case MessageType.Unknown:
+            case MessageType.Recalled:
                 // Unknown message type. Return directly.
                 return;
             default:

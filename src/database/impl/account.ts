@@ -31,6 +31,7 @@ export async function getAccount(source: string) {
         where: {
             source,
         },
+        order: [["updatedAt", "DESC"]],
     });
     return account;
 }

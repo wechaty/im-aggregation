@@ -59,7 +59,9 @@ export default class WhatsAppAdapter extends BaseAdapter {
                 case MessageType.Attachment:
                 case MessageType.Emoticon:
                 case MessageType.Video:
-                    const remoteUrl = await this.storage.upload(message.attachment);
+                    const remoteUrl = await this.storage.upload(
+                        message.attachment
+                    );
                     const fileBox = FileBox.fromUrl(remoteUrl);
                     // const fileBox = FileBox.fromFile(
                     //     message.attachment
@@ -143,6 +145,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
             case MessageType.Contact:
                 break;
             case MessageType.Unknown:
+            case MessageType.Recalled:
                 // Unknown message type. Return directly.
                 return;
             default:
