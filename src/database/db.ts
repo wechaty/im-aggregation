@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
-import log4js from "../utils/logger";
+import Log from "../utils/logger";
 
-const logger = log4js.getLogger("db");
+const logger = new Log("DB");
 
 const db = new Sequelize({
     dialect: "sqlite",

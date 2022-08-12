@@ -6,11 +6,10 @@ import { getMessagesWithinPeriod } from "./database/impl/message";
 import BaseExtension from "./extensions/BaseExtension";
 import FilterExtension from "./extensions/FilterExtension";
 import { extractTimeString, parseTimeString } from "./utils/helper";
-import log4js from "./utils/logger";
-import pm2 from "pm2";
+import Log from "./utils/logger";
 import { onForwardTimeUpdate } from "./utils/watcher";
 
-const logger = log4js.getLogger("Setup");
+const logger = new Log("Setup");
 
 var adapter: BaseAdapter;
 
@@ -79,8 +78,12 @@ process.on("SIGINT", (code) => {
     if (adapter) {
         adapter
             .stop()
-            .catch(logger.error)
-            .finally(() => logger.info(`${adapter.profile.source} stopped`));
+            .catch((err) => {
+                logger.error("Failed to stop adapter", JSON.stringify(err));
+            })
+            .finally(() => {
+                logger.info(`${adapter.profile.source} stopped`);
+            });
     } else {
         logger.info("No adapter to stop");
     }

@@ -4,10 +4,10 @@
  */
 import qiniu from "qiniu";
 import Storage from "./Storage";
-import log4js from "../../utils/logger";
+import Log from "../../utils/logger";
 import path from "path";
 
-const logger = log4js.getLogger("Qiniu");
+const logger = new Log("Qiniu");
 
 const accessKey = process.env.QINIU_ACCESS_KEY;
 const secretKey = process.env.QINIU_SECRET_KEY;
@@ -35,7 +35,7 @@ export default class Qiniu extends Storage {
     private bucket: string;
     private mac: qiniu.auth.digest.Mac;
     private config: qiniu.conf.Config;
-    private logger: log4js.Logger;
+    private logger: Log;
 
     constructor() {
         super();

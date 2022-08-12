@@ -10,7 +10,7 @@ import Message from "../database/models/Message";
 import Extension from "../extensions/Extension";
 import { Command, FilterType, MessageType, Profile } from "../schema/types";
 import { isNullOrEmpty, waitFor } from "../utils/helper";
-import log4js from "../utils/logger";
+import Log from "../utils/logger";
 import EventEmitter from "events";
 import { getAllConfigurations } from "../database/impl/configuration";
 import intl from "../i18n/translation";
@@ -20,7 +20,7 @@ const downloadsFolder = process.env.DOWNLOADS_FOLDER || "downloads";
 export default class BaseAdapter extends EventEmitter {
     profile: Profile;
     bot: WechatyInterface;
-    logger: log4js.Logger;
+    logger: Log;
     downloadsFolder: string = downloadsFolder;
     _commands: { [key: string]: Command } = {};
     _extensions: { [key: string]: Extension } = {};
@@ -31,7 +31,7 @@ export default class BaseAdapter extends EventEmitter {
         this.profile = {
             source: this.constructor.name.replace("Adapter", ""),
         };
-        this.logger = log4js.getLogger(`${this.constructor.name}`);
+        this.logger = new Log(`${this.constructor.name}`);
         this.attachListeners();
     }
 
@@ -53,8 +53,7 @@ export default class BaseAdapter extends EventEmitter {
 
     async stop(): Promise<BaseAdapter> {
         await this.bot.logout();
-        await this.bot.stop();
-        this.logger.info("Bot stopped");
+        this.logger.info("Bot logout");
         return this;
     }
 
@@ -111,7 +110,7 @@ export default class BaseAdapter extends EventEmitter {
     }
 
     scanHandler(qrcode: string, status: ScanStatus): void {
-        this.logger.log(`Scan QR Code to login: ${status}`);
+        this.logger.info(`Scan QR Code to login: ${status}`);
 
         switch (status) {
             case ScanStatus.Waiting:
@@ -122,18 +121,18 @@ export default class BaseAdapter extends EventEmitter {
                     `server/public/imgs/qrcode/${this.profile.source}.png`,
                     qrcode
                 );
-                this.logger.log(
+                this.logger.info(
                     `Scan Status: QRCode image saved in server/public/imgs/qrcode/${this.profile.source}.png.`
                 );
                 break;
             case ScanStatus.Scanned:
-                this.logger.log("Scan Status: Scanned");
+                this.logger.info("Scan Status: Scanned");
                 break;
             case ScanStatus.Confirmed:
-                this.logger.log("Scan Status: Confirmed");
+                this.logger.info("Scan Status: Confirmed");
                 break;
             default:
-                this.logger.log("Scan Status: Unknown");
+                this.logger.info("Scan Status: Unknown");
                 break;
         }
     }

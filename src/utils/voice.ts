@@ -3,12 +3,12 @@
  */
 // @ts-ignore
 import WxVoice from "wx-voice";
-import log4js from "./logger";
+import Log from "./logger";
 import path from "path";
 import { exec } from "child_process";
 
 const voice = new WxVoice();
-const logger = log4js.getLogger("voice");
+const logger = new Log("Voice");
 const outputFolder = process.env.OUTPUT_FOLDER || "output";
 
 voice.on("error", (err: any) => logger.error(err));
