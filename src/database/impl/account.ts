@@ -1,6 +1,7 @@
 import { ContactSelfInterface } from "wechaty/impls";
 import Account from "../models/Account";
 import Log from "../../utils/logger";
+import { Contact } from "wechaty";
 
 const logger = new Log("DB-Account");
 
@@ -37,7 +38,7 @@ export async function getAccount(source: string) {
 }
 
 export async function logoutAccount(
-    user: ContactSelfInterface,
+    user: ContactSelfInterface | Contact,
     source: string
 ): Promise<void> {
     const account = await Account.findOne({

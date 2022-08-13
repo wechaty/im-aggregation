@@ -52,6 +52,11 @@ export default class BaseAdapter extends EventEmitter {
     }
 
     async stop(): Promise<BaseAdapter> {
+        const self = await this.bot.Contact.find({ id: this.profile.id });
+        if (self) {
+            await this.logoutHandler(self);
+            this.logger.info("Account logged out");
+        }
         await this.bot.logout();
         this.logger.info("Bot logout");
         return this;
@@ -121,6 +126,7 @@ export default class BaseAdapter extends EventEmitter {
                     `server/public/imgs/qrcode/${this.profile.source}.png`,
                     qrcode
                 );
+                this.logger.info(`QRCode: ${qrcode}`);
                 this.logger.info(
                     `Scan Status: QRCode image saved in server/public/imgs/qrcode/${this.profile.source}.png.`
                 );
@@ -143,7 +149,7 @@ export default class BaseAdapter extends EventEmitter {
         this.bot.say(`[${new Date().toLocaleString()}] Login Successfully!`);
     }
 
-    async logoutHandler(user: ContactSelfInterface): Promise<void> {
+    async logoutHandler(user: ContactSelfInterface | Contact): Promise<void> {
         return logoutAccount(user, this.profile.source);
     }
 

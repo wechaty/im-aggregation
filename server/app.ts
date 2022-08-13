@@ -2,6 +2,7 @@ import express from "express";
 import CookieParser from "cookie-parser";
 import Compression from "compression";
 import path from "path";
+import cors from "cors";
 import router from "./router";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(CookieParser());
 app.use(Compression());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors());
 
 // set the static files location, for example: /public/img will be /img for users to access.
 app.use("/", express.static(path.resolve(__dirname, "./public")));

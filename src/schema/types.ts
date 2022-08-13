@@ -112,6 +112,14 @@ export interface IntlSource {
     [key: string]: string;
 }
 
-export interface IntlSourceMap { 
+export interface IntlSourceMap {
     [key: string]: IntlSource;
+}
+
+export enum ProcessMessageType {
+    LOGOUT = "LOGOUT",
+}
+export interface ProcessMessage {
+    type: ProcessMessageType;
+    payload: any;
 }

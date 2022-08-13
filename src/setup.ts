@@ -5,6 +5,7 @@ import { getAllConfigurations } from "./database/impl/configuration";
 import { getMessagesWithinPeriod } from "./database/impl/message";
 import BaseExtension from "./extensions/BaseExtension";
 import FilterExtension from "./extensions/FilterExtension";
+import { ProcessMessage } from "./schema/types";
 import { extractTimeString, parseTimeString } from "./utils/helper";
 import Log from "./utils/logger";
 import { onForwardTimeUpdate } from "./utils/watcher";
@@ -70,23 +71,8 @@ export async function setup() {
     });
 }
 
-/**
- * before exit, make adapter log out.
- */
-process.on("SIGINT", (code) => {
-    logger.info(`${adapter.profile.source} is going to exit with code ${code}`);
-    if (adapter) {
-        adapter
-            .stop()
-            .catch((err) => {
-                logger.error("Failed to stop adapter", JSON.stringify(err));
-            })
-            .finally(() => {
-                logger.info(`${adapter.profile.source} stopped`);
-            });
-    } else {
-        logger.info("No adapter to stop");
-    }
+process.on("message", (msg: any) => {
+    logger.info("Receive Message", msg);
 });
 
 setup();

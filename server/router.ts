@@ -2,11 +2,12 @@ import { Router } from "express";
 import fs from "fs";
 import path from "path";
 import { getAccount } from "../src/database/impl/account";
-import JSONResponse from "./JSONResponse";
+import Response from "./Response";
 import {
     exitAdapterProcess,
     getAdapterProcessStatus,
     restartAdapterProcess,
+    sendMessageToProcess,
 } from "./service";
 
 interface user {
@@ -61,16 +62,16 @@ router.get("/info", async (_, res) => {
             },
         });
     }
-    res.json(JSONResponse.success(info)).end();
+    res.json(Response.success(info)).end();
 });
 
 router.post("/exit", async (req, res) => {
     const adapter = req.body.adapter;
     try {
         await exitAdapterProcess(adapter);
-        res.json(JSONResponse.success()).end();
+        res.json(Response.success()).end();
     } catch (err: any) {
-        res.json(JSONResponse.error(err.message)).end();
+        res.json(Response.error(err.message)).end();
     }
 });
 
@@ -80,9 +81,21 @@ router.post("/restart", async (req, res) => {
         const list = await getAdapterProcessStatus();
         await restartAdapterProcess(adapter, list);
 
-        res.json(JSONResponse.success()).end();
+        res.json(Response.success()).end();
     } catch (err: any) {
-        res.json(JSONResponse.error(err.message)).end();
+        res.json(Response.error(err.message)).end();
+    }
+});
+
+router.post("/logout", async (req, res) => {
+    const adapter: string = req.body.adapter;
+    try {
+        const list = await getAdapterProcessStatus();
+        await sendMessageToProcess(adapter, { type: "LOGOUT" }, list);
+
+        res.json(Response.success()).end();
+    } catch (err: any) {
+        res.json(Response.error(err.message)).end();
     }
 });
 
