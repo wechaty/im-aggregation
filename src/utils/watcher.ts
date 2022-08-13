@@ -1,7 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { Configuration } from "../schema/types";
+import Log from "./logger";
 
+const logger = new Log("Watcher");
 const filePath = path.resolve(__dirname, "../database/config.json");
 var originContent = JSON.parse(
     fs.readFileSync(filePath, "utf8")
@@ -14,12 +16,16 @@ var originContent = JSON.parse(
 export function onForwardTimeUpdate(callback: (timeString: string) => void) {
     fs.watch(filePath, (event: string, filename: string) => {
         if (event === "change") {
-            const data = JSON.parse(
-                fs.readFileSync(filePath, { encoding: "utf-8" })
-            ) as Configuration;
-            if (data.forwardTime != originContent.forwardTime) {
-                callback(data.forwardTime);
-                originContent = data;
+            try {
+                const data = JSON.parse(
+                    fs.readFileSync(filePath, { encoding: "utf-8" })
+                ) as Configuration;
+                if (data.forwardTime != originContent.forwardTime) {
+                    callback(data.forwardTime);
+                    originContent = data;
+                }
+            } catch (error) {
+                logger.error("%s (%s): %j", filename, filePath, error);
             }
         }
     });

@@ -69,12 +69,16 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     msgBundle.push(fileBox);
                     break;
                 case MessageType.Audio:
-                    const voiceFileBox = FileBox.fromFile(
-                        message.attachment,
-                        `[${message.sentAt.getHours()}:${message.sentAt.getMinutes()}]-${
-                            message.talker
-                        }.wav`
+                    const remoteAudioUrl = await this.storage.upload(
+                        message.attachment
                     );
+                    const voiceFileBox = FileBox.fromUrl(remoteAudioUrl);
+                    // const voiceFileBox = FileBox.fromFile(
+                    //     message.attachment,
+                    //     `[${message.sentAt.getHours()}:${message.sentAt.getMinutes()}]-${
+                    //         message.talker
+                    //     }.wav`
+                    // );
                     const duration = await getDuration(message.attachment);
                     voiceFileBox.metadata = {
                         duration,
