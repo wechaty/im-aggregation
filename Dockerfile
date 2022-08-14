@@ -16,7 +16,7 @@ RUN yarn global add ts-node \
     && yarn global add pm2 \
     && pm2 install pm2-logrotate \
     && yarn \
-    && yarn run compile:wx-voice
+    && bash init.sh
 
 EXPOSE 7777
 CMD ["pm2", "start", "--name", "Server", "'yarn run serve'"]
