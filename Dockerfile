@@ -15,7 +15,7 @@ COPY . .
 RUN yarn global add ts-node \
     && yarn global add pm2 \
     && pm2 install pm2-logrotate \
-    && sudo systemctl status redis-server \
+    && systemctl status redis-server \
     && yarn \
     && yarn run compile:wx-voice
 
