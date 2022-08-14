@@ -69,6 +69,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
                     msgBundle.push(fileBox);
                     break;
                 case MessageType.Audio:
+                    // TODO: some problems with audio.
                     const remoteAudioUrl = await this.storage.upload(
                         message.attachment
                     );
