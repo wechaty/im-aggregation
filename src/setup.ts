@@ -8,6 +8,7 @@ import FilterExtension from "./extensions/FilterExtension";
 import { ProcessMessage } from "./schema/types";
 import { extractTimeString, parseTimeString } from "./utils/helper";
 import Log from "./utils/logger";
+import { Redis } from "./utils/redis";
 import { onForwardTimeUpdate } from "./utils/watcher";
 
 const logger = new Log("Setup");
@@ -29,6 +30,11 @@ async function forwardHandler() {
     } else if (!adapter) {
         logger.error("Adapter not initialized");
     }
+}
+
+async function redisMessageHandler(rawMessage: string) {
+    const { shortcut, args = [] } = JSON.parse(rawMessage) as ProcessMessage;
+    await adapter.invokeCommand(shortcut, ...args);
 }
 
 export async function setup() {
@@ -69,10 +75,12 @@ export async function setup() {
             forwardHandler
         );
     });
-}
 
-process.on("message", (msg: any) => {
-    logger.info("Receive Message", msg);
-});
+    const redis = new Redis();
+    await redis.connect();
+    const subscriber = redis.getSubscriber();
+    await subscriber.connect();
+    await subscriber.subscribe(`${targetAdapter}_message`, redisMessageHandler);
+}
 
 setup();

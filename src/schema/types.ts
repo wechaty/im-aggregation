@@ -115,11 +115,7 @@ export interface IntlSource {
 export interface IntlSourceMap {
     [key: string]: IntlSource;
 }
-
-export enum ProcessMessageType {
-    LOGOUT = "LOGOUT",
-}
 export interface ProcessMessage {
-    type: ProcessMessageType;
-    payload: any;
+    shortcut: string;
+    args: any[];
 }

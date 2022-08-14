@@ -216,7 +216,7 @@ export default class BaseAdapter extends EventEmitter {
 
     public async invokeCommand(shortcut: string, ...args: any[]) {
         if (this._commands[shortcut]) {
-            await this._commands[shortcut].handle(...args);
+            await this._commands[shortcut].handle(...args).catch((err: Error) => this.logger.error(err));
         }
     }
 

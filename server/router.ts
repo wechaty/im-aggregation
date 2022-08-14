@@ -90,8 +90,7 @@ router.post("/restart", async (req, res) => {
 router.post("/logout", async (req, res) => {
     const adapter: string = req.body.adapter;
     try {
-        const list = await getAdapterProcessStatus();
-        await sendMessageToProcess(adapter, { type: "LOGOUT" }, list);
+        await sendMessageToProcess(adapter, { shortcut: "lo" });
 
         res.json(Response.success()).end();
     } catch (err: any) {

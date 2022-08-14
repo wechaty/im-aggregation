@@ -30,20 +30,3 @@ export function onForwardTimeUpdate(callback: (timeString: string) => void) {
         }
     });
 }
-
-export function onQrCodeUpdate(name: string, callback: () => any) {
-    fs.watchFile(
-        path.resolve(__dirname, `../../server/public/imgs/qrcode/${name}.png`),
-        (curr, prev) => {
-            if (curr.mtime > prev.mtime) {
-                callback();
-            }
-        }
-    );
-}
-
-export function offQrCodeUpdate(name: string) {
-    fs.unwatchFile(
-        path.resolve(__dirname, `../../server/public/imgs/qrcode/${name}.png`)
-    );
-}
