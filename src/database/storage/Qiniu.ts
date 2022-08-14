@@ -13,7 +13,7 @@ const accessKey = process.env.QINIU_ACCESS_KEY;
 const secretKey = process.env.QINIU_SECRET_KEY;
 
 if (!accessKey || !secretKey) {
-    throw new Error("Qiniu access key or secret key is not set");
+    logger.error("Qiniu accessKey or secretKey is not set");
 }
 
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
@@ -22,7 +22,7 @@ const bucket = process.env.QINIU_BUCKET || "";
 const endpoint = process.env.QINIU_ENDPOINT || "";
 
 if (!bucket) {
-    throw new Error("QINIU_BUCKET is required");
+    logger.error("Qiniu bucket is not set");
 }
 
 const config = new qiniu.conf.Config();
