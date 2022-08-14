@@ -21,6 +21,7 @@ export default class WhatsAppAdapter extends BaseAdapter {
             puppeteerOptions: {
                 puppeteer: {
                     headless: true,
+                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
                 },
             },
         });
