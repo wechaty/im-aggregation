@@ -1,13 +1,16 @@
 FROM node:16
 LABEL author="TankNee"
 # 安装必要的环境
+# chromium denpendency: https://github.com/it-novum/puppeteer-docker/blob/fa7391eef0f0d3326a47ac2a40098052891cca1e/Dockerfile#L12
 RUN apt-get update \
     && apt-get install -y curl \
     && apt-get install -y build-essential \
     && apt-get install -y ffmpeg \
     && apt-get install -y pandoc \
     && apt-get install -y redis \
-    && apt-get install -y ca-certificates fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release wget xdg-utils
+    && apt-get install -y wget gnupg \
+    && apt-get install -y fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 libgtk2.0-0 libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libgbm1 libasound2 \
+    && apt-get install -y chromium
 # 定位到工作目录
 WORKDIR /usr/src/app
 COPY . .
