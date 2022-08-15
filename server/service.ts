@@ -70,9 +70,7 @@ export async function restartAdapterProcess(
 
 export async function sendMessageToProcess(name: string, message: any) {
     const r = new Redis();
-    await r.connect();
-    const subscriber = r.getSubscriber();
-    await subscriber.connect();
+    const subscriber = await r.getSubscriber();
 
     await subscriber.publish(`${name}_message`, JSON.stringify(message));
 }

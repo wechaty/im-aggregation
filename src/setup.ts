@@ -34,7 +34,11 @@ async function forwardHandler() {
 
 async function redisMessageHandler(rawMessage: string) {
     const { shortcut, args = [] } = JSON.parse(rawMessage) as ProcessMessage;
-    await adapter.invokeCommand(shortcut, ...args);
+    try {
+        await adapter.invokeCommand(shortcut, ...args);
+    } catch (error) {
+        logger.error(error);
+    }
 }
 
 export async function setup() {
@@ -77,9 +81,7 @@ export async function setup() {
     });
 
     const redis = new Redis();
-    await redis.connect();
-    const subscriber = redis.getSubscriber();
-    await subscriber.connect();
+    const subscriber = await redis.getSubscriber();
     await subscriber.subscribe(`${targetAdapter}_message`, redisMessageHandler);
 }
 

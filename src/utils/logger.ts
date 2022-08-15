@@ -17,4 +17,7 @@ export default class Log {
     warn(...args: any[]) {
         Brolog.warn(this.prefix, ...args);
     }
+    silly(...args: any[]) {
+        Brolog.silly(this.prefix, ...args);
+    }
 }

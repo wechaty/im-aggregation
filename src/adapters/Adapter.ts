@@ -107,6 +107,9 @@ export default class BaseAdapter extends EventEmitter {
             }) as Sayable;
             try {
                 const sayableMsg = await this.convertMessagesToSayable(msg);
+                this.logger.info(
+                    `Forwarding ${msg.length} messages from ${source}`
+                );
                 await this.batchSay([hint].concat(sayableMsg), target, 100);
             } catch (error) {
                 this.logger.error(error);
@@ -121,6 +124,17 @@ export default class BaseAdapter extends EventEmitter {
             case ScanStatus.Waiting:
             case ScanStatus.Timeout:
                 if (isNullOrEmpty(qrcode)) break;
+
+                if (!isNullOrEmpty(this.profile.id)) {
+                    this.logger.info("Switch account to offline status");
+                    this.bot.Contact.find({ id: this.profile.id }).then(
+                        (contact) => {
+                            if (contact) {
+                                logoutAccount(contact, this.profile.source);
+                            }
+                        }
+                    );
+                }
 
                 QRCode.toFile(
                     `server/public/imgs/qrcode/${this.profile.source}.png`,
@@ -179,7 +193,7 @@ export default class BaseAdapter extends EventEmitter {
     }
 
     private async heatBeatHandler(data: any): Promise<void> {
-        // this.logger.trace(data);
+        this.logger.silly(data);
     }
 
     private async errorHandler(error: Error): Promise<void> {
@@ -200,10 +214,12 @@ export default class BaseAdapter extends EventEmitter {
         }
         this._extensions[ext.name] = ext;
         ext.register();
+        this.logger.silly(`Extension ${ext.name} loaded.`);
     }
 
     public unregisertExtension(ext: Extension) {
         delete this._extensions[ext.name];
+        this.logger.silly(`Extension ${ext.name} unregistered.`);
     }
 
     public registerCommand(cmd: Command) {
@@ -212,11 +228,15 @@ export default class BaseAdapter extends EventEmitter {
             throw new Error(`Command ${cmd.shortcut} already exists`);
         }
         this._commands[cmd.shortcut] = cmd;
+        this.logger.silly(`Command ${cmd.shortcut} registered.`);
     }
 
     public async invokeCommand(shortcut: string, ...args: any[]) {
         if (this._commands[shortcut]) {
-            await this._commands[shortcut].handle(...args).catch((err: Error) => this.logger.error(err));
+            this.logger.info(`Invoke command ${shortcut}, args: ${args}.`);
+            await this._commands[shortcut]
+                .handle(...args)
+                .catch((err: Error) => this.logger.error(err));
         }
     }
 

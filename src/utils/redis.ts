@@ -19,7 +19,7 @@ export class Redis {
     }
 
     async connect(): Promise<void> {
-        await this.client.connect();
+        await this.client.connect().catch((err) => this.logger.error(err));
     }
 
     async set(key: string, value: any): Promise<void> {
@@ -41,7 +41,10 @@ export class Redis {
      * @link https://github.com/redis/node-redis#pubsub
      * @returns {RedisClientType} a duplicate of the client
      */
-    getSubscriber(): RedisClientType {
-        return this.client.duplicate();
+    async getSubscriber(): Promise<RedisClientType> {
+        await this.connect();
+        const sub = this.client.duplicate();
+        await sub.connect().catch((err) => this.logger.error(err));
+        return sub;
     }
 }
