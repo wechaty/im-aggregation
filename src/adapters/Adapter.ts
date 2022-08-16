@@ -228,12 +228,12 @@ export default class BaseAdapter extends EventEmitter {
             throw new Error(`Command ${cmd.shortcut} already exists`);
         }
         this._commands[cmd.shortcut] = cmd;
-        this.logger.silly(`Command ${cmd.shortcut} registered.`);
+        this.logger.silly(`Command ${cmd.name} registered.`);
     }
 
     public async invokeCommand(shortcut: string, ...args: any[]) {
         if (this._commands[shortcut]) {
-            this.logger.info(`Invoke command ${shortcut}, args: ${args}.`);
+            this.logger.info(`Invoke command ${this._commands[shortcut].name}, args: ${args}.`);
             await this._commands[shortcut]
                 .handle(...args)
                 .catch((err: Error) => this.logger.error(err));
