@@ -98,6 +98,11 @@ export default class BaseExtension extends Extension {
                     name: configs.target.name,
                 })
             );
+            msgBundle.push(
+                intl.t("forwardMessageLimit", {
+                    limit: configs.forwardMessageLimit,
+                })
+            );
 
             await this.adapter.batchSay(msgBundle);
         };

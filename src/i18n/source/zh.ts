@@ -58,4 +58,5 @@ export default {
     aggregationEndTimeSet: "聚合结束时间设置为：{hour}:{minute}",
     setAggregationEndTime: "设置聚合结束时间",
     setAggregationEndTimeDescription: "使用 18:00 的格式（24小时制）设置聚合消息的结束时间",
+    forwardMessageLimit: "转发消息数量限制：{limit}",
 };

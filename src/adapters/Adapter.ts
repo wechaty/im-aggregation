@@ -168,6 +168,9 @@ export default class BaseAdapter extends EventEmitter {
     }
 
     async messageHandler(message: MessageInterface): Promise<void> {
+        this.logger.silly(
+            `${message.type()} Message received, from ${message.talker()} to ${message.listener()}, content: ${message.text()}`
+        );
         const self = message.talker().self() && message.listener()?.self();
         if (self) {
             switch (message.type()) {
@@ -186,6 +189,9 @@ export default class BaseAdapter extends EventEmitter {
             }
         }
         if (!this.filter(message)) {
+            this.logger.info(
+                `Message from ${message.talker()} has been filtered: ${message.text()}`
+            );
             return;
         }
         this.emit("message", message);
@@ -233,7 +239,9 @@ export default class BaseAdapter extends EventEmitter {
 
     public async invokeCommand(shortcut: string, ...args: any[]) {
         if (this._commands[shortcut]) {
-            this.logger.info(`Invoke command ${this._commands[shortcut].name}, args: ${args}.`);
+            this.logger.info(
+                `Invoke command ${this._commands[shortcut].name}, args: ${args}.`
+            );
             await this._commands[shortcut]
                 .handle(...args)
                 .catch((err: Error) => this.logger.error(err));

@@ -1,7 +1,7 @@
 /**
- * 这是插件的基类，所有插件都应该继承这个类。
- * 插件不提供持久化功能，所以插件的数据都会在每次重新加载时丢失。
- * 一个适配器可以有多个插件（extension），每个插件可以提供多个指令（command）
+ *  This is the base class of the plugin, all plugins should inherit this class.
+ *  The plugin does not provide persistence, so the plugin's data will be lost every time it is reloaded.
+ *  An adapter can have multiple plugins (extension), each of which can provide multiple commands.
  */
 
 import BaseAdapter from "../adapters/Adapter";

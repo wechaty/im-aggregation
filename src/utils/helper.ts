@@ -4,6 +4,7 @@ import { MessageInterface } from "wechaty/impls";
 import { MessageTypeName } from "../schema/types";
 import crypto from "crypto";
 import _ from "lodash";
+import fs from "fs";
 
 export function isNullOrEmpty(value: any): boolean {
     return _.isNull(value) || _.isEmpty(value);
@@ -89,4 +90,16 @@ export async function waitFor(interval: number) {
     return new Promise((resolve) => {
         setTimeout(resolve, interval);
     });
+}
+
+export async function loadInnerExtensions() {
+    const Extensions = [];
+    const fileNames = fs
+        .readdirSync(path.resolve(__dirname, "../extensions"))
+        .filter((f) => f !== "Extension.ts");
+    for (const fileName of fileNames) {
+        const Extension = (await import(`../extensions/${fileName}`)).default;
+        Extensions.push(Extension);
+    }
+    return Extensions;
 }

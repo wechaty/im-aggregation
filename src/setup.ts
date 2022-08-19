@@ -3,10 +3,12 @@ import schedule from "node-schedule";
 import BaseAdapter from "./adapters/Adapter";
 import { getAllConfigurations } from "./database/impl/configuration";
 import { getMessagesWithinPeriod } from "./database/impl/message";
-import BaseExtension from "./extensions/BaseExtension";
-import FilterExtension from "./extensions/FilterExtension";
 import { ProcessMessage } from "./schema/types";
-import { extractTimeString, parseTimeString } from "./utils/helper";
+import {
+    extractTimeString,
+    loadInnerExtensions,
+    parseTimeString,
+} from "./utils/helper";
 import Log from "./utils/logger";
 import { Redis } from "./utils/redis";
 import { onForwardTimeUpdate } from "./utils/watcher";
@@ -52,14 +54,19 @@ export async function setup() {
 
     adapter = new Adapter();
 
-    adapter.loadExtension(new BaseExtension(adapter));
-    adapter.loadExtension(new FilterExtension(adapter));
+    // load inner extensions
+    const exts = await loadInnerExtensions();
+    exts.map((Ext) => adapter.loadExtension(new Ext(adapter)));
 
     await adapter.start();
 
     let config = getAllConfigurations();
     let { forwardTime } = config;
     let { hour, minute } = extractTimeString(forwardTime);
+
+    logger.info(`Setting aggregation start time: ${config.aggregation.startTime}`);
+    logger.info(`Setting aggregation end time: ${config.aggregation.endTime}`);
+    logger.info(`Setting forward time: ${forwardTime}`);
 
     var forwardJob = schedule.scheduleJob(
         `${minute} ${hour} * * *`,
@@ -80,9 +87,14 @@ export async function setup() {
         );
     });
 
+    logger.info(`Connecting to redis...`);
     const redis = new Redis();
     const subscriber = await redis.getSubscriber();
+
+    logger.info(`Subscribing to redis channel: ${targetAdapter}_message`);
     await subscriber.subscribe(`${targetAdapter}_message`, redisMessageHandler);
 }
 
-setup();
+setup().catch((error) => {
+    logger.error(error);
+});
