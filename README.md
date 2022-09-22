@@ -106,3 +106,16 @@ The second step is run the initial script:
 bash init.sh
 ```
 
+### Project Diagram
+
+#### Top Structure Diagram
+
+Here is the top structure of our program, we use pm2 to manage our progress. Server process offer you a simple ui to start or stop adapter process.
+
+![](./assets/TopStructure.jpg)
+
+#### Adapter Structure Diagram
+
+This is the structure of adapter, the adapter object will load extensions from local or network. Then, extension resgister some commands in adapter object, these commands will be invoked by user input. What's more, adapter alson emit some important events (message, error .etc) for the listeners that registered in adapter.
+
+![](./assets/AdapterStructure.jpg)
