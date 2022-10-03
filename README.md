@@ -1,6 +1,8 @@
 <h1 align="center">IM Aggregation</h1>
 <h3 align="center">Powered By Wechaty</h3>
 
+<h5 align="center">English | <a href="./README-zh.md">简体中文</a></h5>
+
 ### What is Wechaty IM Aggregation？
 
 This is a project aimed at aggregating messages from multiple im applications, WeCom, WeChat or WhatsApp. You can set up our program by docker easily or clone the repository and run the code manually.
@@ -53,6 +55,8 @@ QINIU_BUCKET=
 
 QINIU_ENDPOINT=
 ```
+
+> Note that if you want to use WeCom, in order to ensure the completeness of the function, go to Qiniu Cloud to apply for a bucket and write the corresponding configuration to the environment variable file.
 
 Creating some folder to mount docker logs.
 
