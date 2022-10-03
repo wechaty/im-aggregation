@@ -30,6 +30,11 @@ export enum MessageType {
     Post = 16,
 }
 
+export enum ResponseStatus {
+    Success,
+    Failure,
+}
+
 export enum WechatPuppetType {
     Donut = "donut",
     Padlocal = "padlocal",

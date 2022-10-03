@@ -32,7 +32,7 @@ WECOM_TOKEN=
 
 WECHAT_TOKEN=
 
-# donut, padlocal eg. 
+# donut, padlocal e.g. 
 WECHAT_TOKEN_TYPE=padlocal
 
 
@@ -116,6 +116,6 @@ Here is the top structure of our program, we use pm2 to manage our progress. Ser
 
 #### Adapter Structure Diagram
 
-This is the structure of adapter, the adapter object will load extensions from local or network. Then, extension resgister some commands in adapter object, these commands will be invoked by user input. What's more, adapter alson emit some important events (message, error .etc) for the listeners that registered in adapter.
+This is the structure of adapter, the adapter object will load extensions from local or network. Then, extension resgister some commands in adapter object, these commands will be invoked by user input. What's more, adapter also emit some important events (message, error etc.) for the listeners that registered in adapter.
 
 ![](./assets/AdapterStructure.jpg)

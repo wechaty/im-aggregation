@@ -1,15 +1,17 @@
+import { ResponseStatus } from "../src/schema/types";
+
 export default class Response {
-    status: "success" | "error" = "success";
+    status: ResponseStatus = ResponseStatus.Success;
     data: any;
     static success(data?: any): Response {
         return {
-            status: "success",
+            status: ResponseStatus.Success,
             data,
         };
     }
     static error(data?: any): Response {
         return {
-            status: "error",
+            status: ResponseStatus.Failure,
             data,
         };
     }
